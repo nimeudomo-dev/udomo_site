@@ -8,51 +8,50 @@ export default function Footer({ onNavigate }: FooterProps) {
       <div className="footer-inner">
         <div className="footer-brand">
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <img src="/logo.jpg" alt="Udomo" width={44} height={44} style={{ borderRadius: 8 }} />
-            <span className="footer-logo-text">Udomo</span>
+            <img src="/logo.png" alt="Udomo" width={36} height={36}
+              style={{ objectFit: 'contain', borderRadius: 7 }} />
+            <span style={{ fontFamily: 'Inter, sans-serif', fontSize: 22, fontWeight: 800, color: 'white', letterSpacing: '0.04em' }}>
+              Udomo
+            </span>
           </div>
-          <div className="footer-tagline">Недвижимость в Уфе</div>
-          <a href="tel:83472980899" className="footer-phone">8 347 298-08-99</a>
-          <a href="mailto:info@udomo.ru" className="footer-email">info@udomo.ru</a>
+          <p>Недвижимость в Уфе: покупка, аренда и доверительное управление объектами.</p>
         </div>
 
         <div className="footer-col">
-          <div className="footer-col-title">Покупка</div>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('buy') }}>Новостройки</a>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('buy') }}>Вторичное жильё</a>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('buy') }}>Коммерческая</a>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('buy') }}>Участки</a>
+          <h4>Направления</h4>
+          <ul>
+            <li><a href="#" onClick={e => { e.preventDefault(); onNavigate('buy') }}>Купить квартиру</a></li>
+            <li><a href="#" onClick={e => { e.preventDefault(); onNavigate('buy') }}>Новостройки</a></li>
+            <li><a href="#" onClick={e => { e.preventDefault(); onNavigate('projects') }}>КП Панорама 27</a></li>
+            <li><a href="#" onClick={e => { e.preventDefault(); onNavigate('rent') }}>Аренда</a></li>
+            <li><a href="#">Управление</a></li>
+          </ul>
         </div>
 
         <div className="footer-col">
-          <div className="footer-col-title">Аренда</div>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('rent') }}>Долгосрочная</a>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('rent') }}>Посуточная</a>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('rent') }}>Коммерческая</a>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('rent') }}>Управление</a>
+          <h4>Компания</h4>
+          <ul>
+            <li><a href="#" onClick={e => { e.preventDefault(); onNavigate('about') }}>О нас</a></li>
+            <li><a href="#">Отзывы</a></li>
+            <li><a href="#">Блог</a></li>
+            <li><a href="#" onClick={e => { e.preventDefault(); onNavigate('contacts') }}>Контакты</a></li>
+          </ul>
         </div>
 
         <div className="footer-col">
-          <div className="footer-col-title">Проекты</div>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('projects') }}>КП Панорама 27</a>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('projects') }}>КП Панорама 14</a>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('projects') }}>КА Идея</a>
-        </div>
-
-        <div className="footer-col">
-          <div className="footer-col-title">Компания</div>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('about') }}>О компании</a>
-          <a href="#" onClick={e => { e.preventDefault(); onNavigate('contacts') }}>Контакты</a>
-          <a href="https://2gis.ru/ufa/search/udomo" target="_blank" rel="noopener noreferrer">Мы на 2ГИС</a>
+          <h4>Контакты</h4>
+          <ul>
+            <li><a href="tel:83472980899">8 347 298-08-99</a></li>
+            <li><a href="#">WhatsApp</a></li>
+            <li><a href="#">Telegram</a></li>
+            <li><a href="#">г. Уфа</a></li>
+          </ul>
         </div>
       </div>
 
       <div className="footer-bottom">
-        <div className="footer-copy">© 2024 Udomo. Агентство недвижимости Уфы.</div>
-        <div className="footer-legal">
-          <a href="#">Политика конфиденциальности</a>
-          <a href="#">Пользовательское соглашение</a>
-        </div>
+        <span>© 2025 UDOMO. Все права защищены.</span>
+        <span>Уфа, Республика Башкортостан</span>
       </div>
     </footer>
   )

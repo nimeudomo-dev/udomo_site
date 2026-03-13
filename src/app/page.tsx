@@ -1,38 +1,40 @@
-'use client'
-import { useState, useRef, useCallback } from 'react'
-import Navbar from '@/components/Navbar'
-import Hero from '@/components/Hero'
-import Projects from '@/components/Projects'
-import Mortgage from '@/components/Mortgage'
-import Reviews from '@/components/Reviews'
-import CtaForm from '@/components/CtaForm'
-import Footer from '@/components/Footer'
-import CallModal from '@/components/CallModal'
-import About from '@/components/About'
+"use client";
+import { useState, useRef, useCallback } from "react";
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import Projects from "@/components/Projects";
+import Mortgage from "@/components/Mortgage";
+import Reviews from "@/components/Reviews";
+import CtaForm from "@/components/CtaForm";
+import Footer from "@/components/Footer";
+import CallModal from "@/components/CallModal";
+import About from "@/components/About";
+import Contacts from "@/components/Contacts";
 
-type Page = 'home' | 'buy' | 'projects' | 'rent' | 'about' | 'contacts'
+type Page = "home" | "buy" | "projects" | "rent" | "about" | "contacts" | "favorites";
 
 export default function Home() {
-  const [currentPage, setCurrentPage] = useState<Page>('home')
-  const [modalOpen, setModalOpen] = useState(false)
-  const ctaRef = useRef<HTMLDivElement>(null)
+  const [currentPage, setCurrentPage] = useState<Page>("home");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [mortgageModalOpen, setMortgageModalOpen] = useState(false);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   const navigateTo = useCallback((page: string) => {
-    setCurrentPage(page as Page)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [])
+    setCurrentPage(page as Page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const scrollToCta = useCallback(() => {
-    setCurrentPage('home')
+    setCurrentPage("home");
     setTimeout(() => {
-      const el = document.getElementById('ctaSection')
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      const el = document.getElementById("ctaSection");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
       setTimeout(() => {
-        const input = document.querySelector('.cta-fi') as HTMLInputElement
-        if (input) input.focus()
-      }, 600)
-    }, 50)
-  }, [])
+        const input = document.querySelector(".cta-fi") as HTMLInputElement;
+        if (input) input.focus();
+      }, 600);
+    }, 50);
+  }, []);
 
   return (
     <>
@@ -44,29 +46,66 @@ export default function Home() {
       />
 
       {/* HOME */}
-      <div style={{ display: currentPage === 'home' ? 'block' : 'none' }}>
+      <div style={{ display: currentPage === "home" ? "block" : "none" }}>
         <Hero onScrollToCta={scrollToCta} />
         <Projects />
-        <Mortgage onScrollToCta={scrollToCta} />
+        <Mortgage onScrollToCta={() => setMortgageModalOpen(true)} />
         <Reviews />
         <CtaForm ref={ctaRef} />
       </div>
 
       {/* ABOUT */}
-      <div style={{ display: currentPage === 'about' ? 'block' : 'none' }}>
+      <div style={{ display: currentPage === "about" ? "block" : "none" }}>
         <About onOpenModal={() => setModalOpen(true)} />
       </div>
 
+      {/* CONTACTS */}
+      <div style={{ display: currentPage === "contacts" ? "block" : "none" }}>
+        <Contacts onOpenModal={() => setModalOpen(true)} />
+      </div>
+
+      {/* FAVORITES */}
+      <div style={{ display: currentPage === "favorites" ? "block" : "none" }}>
+        <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40, paddingTop: 80, paddingBottom: 80, textAlign: "center" }}>
+          <div className="sec-title" style={{ marginBottom: 16 }}>Избранные объекты</div>
+          <div className="sec-sub">Вы ещё не добавили ни одного объекта в избранное</div>
+          <button className="btn btn-primary" onClick={() => navigateTo("home")} style={{ marginTop: 32, height: 52, padding: "0 32px" }}>
+            Смотреть объекты →
+          </button>
+        </div>
+      </div>
+
       {/* PLACEHOLDER PAGES */}
-      {(['buy', 'projects', 'rent', 'contacts'] as Page[]).map(page => (
-        <div key={page} style={{ display: currentPage === page ? 'block' : 'none' }}>
-          <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40, paddingTop: 80, paddingBottom: 80, textAlign: 'center' }}>
+      {(["buy", "projects", "rent"] as Page[]).map((page) => (
+        <div
+          key={page}
+          style={{ display: currentPage === page ? "block" : "none" }}
+        >
+          <div
+            className="sec wrap"
+            style={{
+              paddingLeft: 40,
+              paddingRight: 40,
+              paddingTop: 80,
+              paddingBottom: 80,
+              textAlign: "center",
+            }}
+          >
             <div className="sec-title" style={{ marginBottom: 16 }}>
-              {{ buy: 'Купить', projects: 'Проекты', rent: 'Аренда', contacts: 'Контакты' }[page]}
+              {
+                {
+                  buy: "Купить",
+                  projects: "Проекты",
+                  rent: "Аренда",
+                }[page]
+              }
             </div>
             <div className="sec-sub">Раздел в разработке</div>
-            <button className="btn btn-primary" onClick={() => navigateTo('home')}
-              style={{ marginTop: 32, height: 52, padding: '0 32px' }}>
+            <button
+              className="btn btn-primary"
+              onClick={() => navigateTo("home")}
+              style={{ marginTop: 32, height: 52, padding: "0 32px" }}
+            >
               На главную →
             </button>
           </div>
@@ -76,6 +115,12 @@ export default function Home() {
       <Footer onNavigate={navigateTo} />
 
       <CallModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
+      <CallModal
+        isOpen={mortgageModalOpen}
+        onClose={() => setMortgageModalOpen(false)}
+        title="Подобрать ипотеку"
+        subtitle="Оставьте номер — наш специалист свяжется и подберёт выгодные условия"
+      />
     </>
-  )
+  );
 }

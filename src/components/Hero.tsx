@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 
 const slides = [
   {
@@ -31,44 +31,100 @@ const slides = [
   },
 ]
 
+const DELAY = 6000
+
 export default function Hero({ onScrollToCta }: { onScrollToCta: () => void }) {
   const [cur, setCur] = useState(0)
+  const [progress, setProgress] = useState(0)
+  const startRef = useRef<number>(Date.now())
+  const animRef = useRef<number | null>(null)
+  const slideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const goTo = useCallback((n: number) => {
     setCur((n + slides.length) % slides.length)
   }, [])
 
-  useEffect(() => {
-    const timer = setInterval(() => goTo(cur + 1), 6000)
-    return () => clearInterval(timer)
-  }, [cur, goTo])
+  const resetProgress = useCallback(() => {
+    if (animRef.current) cancelAnimationFrame(animRef.current)
+    if (slideTimerRef.current) clearTimeout(slideTimerRef.current)
+    setProgress(0)
+    startRef.current = Date.now()
 
-  const slide = slides[cur]
+    const tick = () => {
+      if (document.hidden) {
+        // Вкладка скрыта — сдвигаем стартовую точку, чтобы не было прыжка
+        startRef.current = Date.now()
+        animRef.current = requestAnimationFrame(tick)
+        return
+      }
+      const elapsed = Date.now() - startRef.current
+      const pct = Math.min((elapsed / DELAY) * 100, 100)
+      setProgress(pct)
+      if (pct < 100) {
+        animRef.current = requestAnimationFrame(tick)
+      }
+    }
+    animRef.current = requestAnimationFrame(tick)
+
+    slideTimerRef.current = setTimeout(() => {
+      setCur(c => (c + 1) % slides.length)
+    }, DELAY)
+  }, [])
+
+  useEffect(() => {
+    resetProgress()
+    return () => {
+      if (animRef.current) cancelAnimationFrame(animRef.current)
+      if (slideTimerRef.current) clearTimeout(slideTimerRef.current)
+    }
+  }, [cur, resetProgress])
+
+  useEffect(() => {
+    const onVisible = () => { if (!document.hidden) resetProgress() }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+  }, [resetProgress])
 
   return (
-    <div className="wrap" style={{ paddingTop: 16, paddingLeft: 40, paddingRight: 40 }}>
+    <div className="wrap" style={{ paddingTop: 28, paddingBottom: 28, paddingLeft: 40, paddingRight: 40 }}>
       <div className="hero">
-        <div className="slide active">
-          <div className="slide-photo">
-            <img src={slide.img} alt={slide.alt} />
-          </div>
-          <div className="slide-overlay"></div>
-          <div className="slide-stripes"></div>
-          <div className="slide-content">
-            <div className="slide-tag"><div className="tag-dot"></div>{slide.tag}</div>
-            <h1 className="slide-title">
-              {slide.title.split('\n').map((line, i) => (
-                <span key={i}>{line}{i < slide.title.split('\n').length - 1 && <br />}</span>
-              ))}
-            </h1>
-            <p className="slide-sub">{slide.sub}</p>
-            <div className="slide-actions">
-              <a className="btn btn-white" href="#" onClick={e => { e.preventDefault(); onScrollToCta() }}>{slide.btn1}</a>
-              <a className="btn btn-ghost" href="#" onClick={e => { e.preventDefault(); onScrollToCta() }}>{slide.btn2}</a>
+
+        {slides.map((slide, i) => (
+          <div key={i} className={`slide${i === cur ? ' active' : ''}`}>
+            <div className="slide-photo">
+              <img src={slide.img} alt={slide.alt} />
+            </div>
+            <div className="slide-overlay"></div>
+            <div className="slide-stripes"></div>
+            <div className="slide-content">
+              <div className="slide-tag"><div className="tag-dot"></div>{slide.tag}</div>
+              <h1 className="slide-title">
+                {slide.title.split('\n').map((line, j) => (
+                  <span key={j}>{line}{j < slide.title.split('\n').length - 1 && <br />}</span>
+                ))}
+              </h1>
+              <p className="slide-sub">{slide.sub}</p>
+              <div className="slide-actions">
+                <a className="btn btn-white" href="#" onClick={e => { e.preventDefault(); onScrollToCta() }}>{slide.btn1}</a>
+                <a className="btn btn-ghost" href="#" onClick={e => { e.preventDefault(); onScrollToCta() }}>{slide.btn2}</a>
+              </div>
             </div>
           </div>
-        </div>
+        ))}
 
+        {/* Стрелки по бокам */}
+        <button className="arr arr-left" onClick={() => goTo(cur - 1)}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M10 4L6 8l4 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+        <button className="arr arr-right" onClick={() => goTo(cur + 1)}>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M6 4l4 4-4 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </button>
+
+        {/* Счётчик + точки — справа снизу */}
         <div className="hero-controls">
           <div className="hero-counter"><b>{cur + 1}</b>&nbsp;/&nbsp;{slides.length}</div>
           <div className="dots-row">
@@ -76,17 +132,12 @@ export default function Hero({ onScrollToCta }: { onScrollToCta: () => void }) {
               <div key={i} className={`dot${i === cur ? ' active' : ''}`} onClick={() => goTo(i)} />
             ))}
           </div>
-          <button className="arr" onClick={() => goTo(cur - 1)}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M10 4L6 8l4 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-          <button className="arr" onClick={() => goTo(cur + 1)}>
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M6 4l4 4-4 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
         </div>
+
+        <div className="hero-progress">
+          <div className="hero-progress-fill" style={{ width: `${progress}%` }}></div>
+        </div>
+
       </div>
     </div>
   )

@@ -37,87 +37,90 @@ export default function Mortgage({ onScrollToCta }: { onScrollToCta: () => void 
 
   return (
     <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40 }}>
-      <div className="sec-head">
+      <div className="sec-head" style={{ marginBottom: 24 }}>
         <div>
           <div className="sec-tag">Ипотека</div>
           <div className="sec-title">Калькулятор ипотеки</div>
-          <div className="sec-sub">Рассчитайте ежемесячный платёж и подберите программу.</div>
+          <div className="sec-sub">Рассчитайте ежемесячный платёж и подберите выгодные условия.</div>
         </div>
       </div>
 
       <div className="mort-wrap">
         <div className="mort-left">
-          <div className="mort-row-2">
-            <div className="mort-field">
-              <label className="mort-label">Стоимость недвижимости, ₽</label>
-              <input className="mort-input" type="text" value={price}
-                onChange={e => setPrice(e.target.value)} />
-            </div>
-            <div className="mort-field">
-              <label className="mort-label">Первоначальный взнос, ₽</label>
-              <input className="mort-input" type="text" value={down}
-                onChange={e => setDown(e.target.value)} />
-            </div>
-          </div>
-          <div className="mort-row-2">
-            <div className="mort-field">
-              <label className="mort-label">Срок, лет</label>
-              <input className="mort-input" type="number" value={years} min="1" max="30"
-                onChange={e => setYears(e.target.value)} />
-            </div>
-            <div className="mort-field">
-              <label className="mort-label">Ставка, %</label>
-              <input className="mort-input" type="number" value={rate} step="0.1" min="0.1"
-                onChange={e => setRate(e.target.value)} />
-            </div>
-          </div>
-          <div className="mort-row-2">
-            <div className="mort-toggle-row">
-              <span className="mort-toggle-label">Использовать МСК</span>
-              <div
-                className="mort-toggle"
-                onClick={() => setMapcapOn(!mapcapOn)}
-                style={{ cursor: 'pointer' }}
-              >
-                <div className="mort-toggle-track"
-                  style={{ background: mapcapOn ? '#1bc8a0' : 'rgba(0,0,0,.12)' }}>
-                  <div className="mort-toggle-thumb"
-                    style={{ transform: mapcapOn ? 'translateX(20px)' : 'translateX(0)' }} />
-                </div>
+          <div className="mort-fields">
+            <div className="mort-row-2">
+              <div className="mort-field">
+                <label className="mort-label">Стоимость недвижимости, ₽</label>
+                <input className="mort-input" id="mPrice" type="text" value={price}
+                  onChange={e => setPrice(e.target.value)} />
+              </div>
+              <div className="mort-field">
+                <label className="mort-label">Первоначальный взнос, ₽</label>
+                <input className="mort-input" id="mDown" type="text" value={down}
+                  onChange={e => setDown(e.target.value)} />
               </div>
             </div>
-            <div className="mort-field" style={{ visibility: mapcapOn ? 'visible' : 'hidden' }}>
-              <label className="mort-label">Сумма МСК, ₽</label>
-              <input className="mort-input" type="text" value={mapcap}
-                onChange={e => setMapcap(e.target.value)} />
+            <div className="mort-row-2">
+              <div className="mort-field">
+                <label className="mort-label">Срок, лет</label>
+                <input className="mort-input" id="mYears" type="number" value={years} min="1" max="30"
+                  onChange={e => setYears(e.target.value)} />
+              </div>
+              <div className="mort-field">
+                <label className="mort-label">Ставка, %</label>
+                <input className="mort-input" id="mRate" type="number" value={rate} step="0.1" min="0.1"
+                  onChange={e => setRate(e.target.value)} />
+              </div>
+            </div>
+            <div className="mort-row-2" style={{ alignItems: 'end' }}>
+              <div className="mort-field">
+                <div className="mort-toggle-row" onClick={() => setMapcapOn(!mapcapOn)} style={{ height: 52 }}>
+                  <span className="mort-toggle-label">Использовать МСК</span>
+                  <div className="mort-toggle-track" id="mapcapTrack"
+                    style={{ background: mapcapOn ? '#1bc8a0' : 'rgba(0,0,0,.12)' }}>
+                    <div className="mort-toggle-thumb" id="mapcapThumb"
+                      style={{ transform: mapcapOn ? 'translateX(20px)' : 'translateX(0)' }} />
+                  </div>
+                </div>
+              </div>
+              {mapcapOn && (
+                <div className="mort-field">
+                  <label className="mort-label">Сумма МСК, ₽</label>
+                  <input className="mort-input" id="mMapcapVal" type="text" value={mapcap}
+                    onChange={e => setMapcap(e.target.value)} />
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         <div className="mort-right">
-          <div className="mort-monthly-val" id="mMonthly">
-            {fmt(r.monthly)} <span>₽</span>
+          <div className="mort-result-main">
+            <div className="mort-monthly" id="mMonthly">
+              {fmt(r.monthly)} <span>₽</span>
+            </div>
+            <div className="mort-monthly-lbl">Ежемесячный платёж</div>
           </div>
-          <div className="mort-monthly-lbl">Ежемесячный платёж</div>
-          <div className="mort-stats">
-            <div className="mort-stat">
-              <div className="mort-stat-val">{fmt(r.loan)} ₽</div>
-              <div className="mort-stat-lbl">Сумма кредита</div>
+          <div className="mort-divider"></div>
+          <div className="mort-results-grid">
+            <div className="mort-res-item">
+              <div className="mort-res-val" id="mLoan">{fmt(r.loan)} ₽</div>
+              <div className="mort-res-lbl">Сумма кредита</div>
             </div>
-            <div className="mort-stat">
-              <div className="mort-stat-val">{fmt(r.overpay)} ₽</div>
-              <div className="mort-stat-lbl">Переплата по кредиту</div>
+            <div className="mort-res-item">
+              <div className="mort-res-val" id="mOverpay">{fmt(r.overpay)} ₽</div>
+              <div className="mort-res-lbl">Переплата по кредиту</div>
             </div>
-            <div className="mort-stat">
-              <div className="mort-stat-val">{fmt(r.total)} ₽</div>
-              <div className="mort-stat-lbl">Общая выплата</div>
+            <div className="mort-res-item">
+              <div className="mort-res-val" id="mTotal">{fmt(r.total)} ₽</div>
+              <div className="mort-res-lbl">Общая выплата</div>
             </div>
-            <div className="mort-stat">
-              <div className="mort-stat-val">{fmt(r.income)} ₽</div>
-              <div className="mort-stat-lbl">Рекомендуемый доход</div>
+            <div className="mort-res-item">
+              <div className="mort-res-val" id="mIncome">{fmt(r.income)} ₽</div>
+              <div className="mort-res-lbl">Рекомендуемый доход</div>
             </div>
           </div>
-          <button className="mort-cta-btn" onClick={onScrollToCta}>
+          <button className="mort-cta" onClick={onScrollToCta}>
             Подобрать ипотеку →
           </button>
         </div>
