@@ -12,14 +12,14 @@ export default function Contacts({ onOpenModal }: ContactsProps) {
     <div id="page-contacts">
 
       {/* Шапка */}
-      <div className="wrap" style={{ paddingTop: 80, paddingLeft: 40, paddingRight: 40 }}>
+      <div className="wrap" style={{ paddingTop: 80 }}>
         <div className="sec-tag">Контакты</div>
         <div className="sec-title" style={{ marginBottom: 8 }}>Свяжитесь с нами</div>
         <div className="sec-sub">Работаем в Уфе — поможем с любым вопросом по недвижимости лично, по телефону или онлайн.</div>
       </div>
 
       {/* Основной блок: инфо + карта */}
-      <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40, paddingTop: 32 }}>
+      <div className="sec wrap" style={{ paddingTop: 32 }}>
         <div className="contacts-grid">
 
           {/* Карта */}
@@ -160,7 +160,7 @@ export default function Contacts({ onOpenModal }: ContactsProps) {
       </div>
 
       {/* Нижний блок: реквизиты */}
-      <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40, paddingBottom: 60 }}>
+      <div className="sec wrap" style={{ paddingBottom: 60 }}>
         <div className="contacts-requisites">
           <div className="contacts-req-title">Реквизиты компании</div>
           <div className="contacts-req-grid">

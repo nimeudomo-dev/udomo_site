@@ -6,7 +6,7 @@ export default function About({ onOpenModal }: AboutProps) {
   return (
     <div id="page-about">
       {/* Hero */}
-      <div className="wrap" style={{ paddingTop: 80, paddingLeft: 40, paddingRight: 40 }}>
+      <div className="wrap" style={{ paddingTop: 80 }}>
         <div className="about-hero">
           <div className="about-hero-text">
             <div className="sec-tag">О компании</div>
@@ -34,7 +34,7 @@ export default function About({ onOpenModal }: AboutProps) {
       </div>
 
       {/* История */}
-      <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40 }}>
+      <div className="sec wrap" >
         <div className="sec-head" style={{ marginBottom: 40 }}>
           <div>
             <div className="sec-tag">Наша история</div>
@@ -60,7 +60,7 @@ export default function About({ onOpenModal }: AboutProps) {
       </div>
 
       {/* Ценности */}
-      <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40 }}>
+      <div className="sec wrap" >
         <div className="sec-head" style={{ marginBottom: 40 }}>
           <div>
             <div className="sec-tag">Принципы работы</div>
@@ -84,7 +84,7 @@ export default function About({ onOpenModal }: AboutProps) {
       </div>
 
       {/* Команда */}
-      <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40, paddingBottom: 80 }}>
+      <div className="sec wrap" style={{ paddingBottom: 80 }}>
         <div className="sec-head" style={{ marginBottom: 40 }}>
           <div>
             <div className="sec-tag">Люди</div>

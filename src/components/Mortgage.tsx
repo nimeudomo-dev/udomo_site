@@ -36,7 +36,7 @@ export default function Mortgage({ onScrollToCta }: { onScrollToCta: () => void 
   const r = calc()
 
   return (
-    <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40 }}>
+    <div className="sec wrap" >
       <div className="sec-head" style={{ marginBottom: 24 }}>
         <div>
           <div className="sec-tag">Ипотека</div>

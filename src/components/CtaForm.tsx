@@ -25,7 +25,7 @@ const CtaForm = forwardRef<HTMLDivElement>((_, ref) => {
   }
 
   return (
-    <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40 }} ref={ref} id="ctaSection">
+    <div className="sec wrap" ref={ref} id="ctaSection">
       <div className="cta-block">
         <div className="cta-left">
           <div className="cta-lbl">Бесплатная консультация</div>

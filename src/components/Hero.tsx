@@ -86,7 +86,7 @@ export default function Hero({ onScrollToCta }: { onScrollToCta: () => void }) {
   }, [resetProgress])
 
   return (
-    <div className="wrap" style={{ paddingTop: 28, paddingBottom: 28, paddingLeft: 40, paddingRight: 40 }}>
+    <div className="wrap" style={{ paddingTop: 28, paddingBottom: 28 }}>
       <div className="hero">
 
         {slides.map((slide, i) => (

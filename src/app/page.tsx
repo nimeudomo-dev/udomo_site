@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Projects from "@/components/Projects";
@@ -10,22 +10,48 @@ import Footer from "@/components/Footer";
 import CallModal from "@/components/CallModal";
 import About from "@/components/About";
 import Contacts from "@/components/Contacts";
+import ComingSoon from "@/components/ComingSoon";
+import PropertyListPage from "@/components/PropertyListPage";
+import FavoritesPage from "@/components/FavoritesPage";
+import SellPage from "@/components/SellPage";
+import { useFavorites } from "@/hooks/useFavorites";
+import EscrowPage from "@/components/EscrowPage";
+import MortgagePage from "@/components/MortgagePage";
 
-type Page = "home" | "buy" | "projects" | "rent" | "about" | "contacts" | "favorites";
+type Page = "home" | "buy" | "projects" | "rent" | "sell" | "escrow" | "mortgage" | "about" | "contacts" | "favorites" | "blog" | "careers" | "tourism";
+
+const VALID_PAGES: Page[] = ["home", "buy", "projects", "rent", "sell", "escrow", "mortgage", "about", "contacts", "favorites", "blog", "careers", "tourism"];
+
+function pageFromUrl(): Page {
+  if (typeof window === "undefined") return "home";
+  const p = new URLSearchParams(window.location.search).get("p");
+  return (p && VALID_PAGES.includes(p as Page)) ? p as Page : "home";
+}
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [modalOpen, setModalOpen] = useState(false);
   const [mortgageModalOpen, setMortgageModalOpen] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
+  const { favIds, toggleFav, clearAll } = useFavorites();
+
+  useEffect(() => {
+    setCurrentPage(pageFromUrl());
+    const handlePop = () => setCurrentPage(pageFromUrl());
+    window.addEventListener("popstate", handlePop);
+    return () => window.removeEventListener("popstate", handlePop);
+  }, []);
 
   const navigateTo = useCallback((page: string) => {
     setCurrentPage(page as Page);
+    const url = page === "home" ? "/" : `/?p=${page}`;
+    window.history.pushState({}, "", url);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
 
   const scrollToCta = useCallback(() => {
     setCurrentPage("home");
+    window.history.pushState({}, "", "/");
     setTimeout(() => {
       const el = document.getElementById("ctaSection");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -41,7 +67,7 @@ export default function Home() {
       <Navbar
         currentPage={currentPage}
         onNavigate={navigateTo}
-        favCount={0}
+        favCount={favIds.length}
         onOpenModal={() => setModalOpen(true)}
       />
 
@@ -66,49 +92,40 @@ export default function Home() {
 
       {/* FAVORITES */}
       <div style={{ display: currentPage === "favorites" ? "block" : "none" }}>
-        <div className="sec wrap" style={{ paddingLeft: 40, paddingRight: 40, paddingTop: 80, paddingBottom: 80, textAlign: "center" }}>
-          <div className="sec-title" style={{ marginBottom: 16 }}>Избранные объекты</div>
-          <div className="sec-sub">Вы ещё не добавили ни одного объекта в избранное</div>
-          <button className="btn btn-primary" onClick={() => navigateTo("home")} style={{ marginTop: 32, height: 52, padding: "0 32px" }}>
-            Смотреть объекты →
-          </button>
-        </div>
+        <FavoritesPage
+          favIds={favIds}
+          onToggleFav={toggleFav}
+          onClearAll={clearAll}
+          onNavigate={navigateTo}
+        />
       </div>
 
-      {/* PLACEHOLDER PAGES */}
-      {(["buy", "projects", "rent"] as Page[]).map((page) => (
-        <div
-          key={page}
-          style={{ display: currentPage === page ? "block" : "none" }}
-        >
-          <div
-            className="sec wrap"
-            style={{
-              paddingLeft: 40,
-              paddingRight: 40,
-              paddingTop: 80,
-              paddingBottom: 80,
-              textAlign: "center",
-            }}
-          >
-            <div className="sec-title" style={{ marginBottom: 16 }}>
-              {
-                {
-                  buy: "Купить",
-                  projects: "Проекты",
-                  rent: "Аренда",
-                }[page]
-              }
-            </div>
-            <div className="sec-sub">Раздел в разработке</div>
-            <button
-              className="btn btn-primary"
-              onClick={() => navigateTo("home")}
-              style={{ marginTop: 32, height: 52, padding: "0 32px" }}
-            >
-              На главную →
-            </button>
-          </div>
+      {/* LEAD PAGES */}
+      <div style={{ display: currentPage === "sell" ? "block" : "none" }}>
+        <SellPage />
+      </div>
+      <div style={{ display: currentPage === "escrow" ? "block" : "none" }}>
+        <EscrowPage />
+      </div>
+      <div style={{ display: currentPage === "mortgage" ? "block" : "none" }}>
+        <MortgagePage />
+      </div>
+
+      {/* BUY — listing page */}
+      <div style={{ display: currentPage === "buy" ? "block" : "none" }}>
+        <PropertyListPage favIds={favIds} onToggleFav={toggleFav} />
+      </div>
+
+      {/* COMING SOON PAGES */}
+      {([
+        { page: "projects", title: "Проекты" },
+        { page: "rent",     title: "Аренда" },
+        { page: "blog",     title: "Блог" },
+        { page: "careers",  title: "Вакансии" },
+        { page: "tourism",  title: "Туризм" },
+      ] as { page: Page; title: string }[]).map(({ page, title }) => (
+        <div key={page} style={{ display: currentPage === page ? "block" : "none" }}>
+          <ComingSoon title={title} onBack={() => navigateTo("home")} />
         </div>
       ))}
 
