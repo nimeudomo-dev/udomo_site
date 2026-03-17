@@ -12,7 +12,7 @@ export default function Contacts({ onOpenModal }: ContactsProps) {
     <div id="page-contacts">
 
       {/* Шапка */}
-      <div className="wrap" style={{ paddingTop: 80 }}>
+      <div className="wrap" style={{ paddingTop: 96 }}>
         <div className="sec-tag">Контакты</div>
         <div className="sec-title" style={{ marginBottom: 8 }}>Свяжитесь с нами</div>
         <div className="sec-sub">Работаем в Уфе — поможем с любым вопросом по недвижимости лично, по телефону или онлайн.</div>

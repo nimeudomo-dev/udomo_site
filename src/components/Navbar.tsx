@@ -1,9 +1,14 @@
 'use client'
 import { useState } from 'react'
 
+export interface NavFilterPreset {
+  propClass?: 'residential' | 'commercial' | 'apartments' | ''
+  category?:  string
+}
+
 interface NavbarProps {
   currentPage: string
-  onNavigate: (page: string) => void
+  onNavigate: (page: string, filterPreset?: NavFilterPreset) => void
   favCount: number
   onOpenModal: () => void
 }
@@ -15,13 +20,10 @@ const ChevronDown = () => (
 )
 
 
-const BUY_ITEMS = [
-  { label: 'Новостройки',       page: 'buy' },
-  { label: 'Вторичка',          page: 'buy' },
-  { label: 'Дома / Коттеджи',   page: 'buy' },
-  { label: 'Коммерческая',      page: 'buy' },
-  { label: 'Земельные участки', page: 'buy' },
-  { label: 'Гаражи / Кладовые', page: 'buy' },
+const BUY_ITEMS: { label: string; filter: NavFilterPreset }[] = [
+  { label: 'Жилая',         filter: { propClass: 'residential', category: '' } },
+  { label: 'Коммерческая',  filter: { propClass: 'commercial',  category: '' } },
+  { label: 'Апартаменты',   filter: { propClass: 'apartments',  category: '' } },
 ]
 
 export default function Navbar({ currentPage, onNavigate, favCount, onOpenModal }: NavbarProps) {
@@ -54,13 +56,13 @@ export default function Navbar({ currentPage, onNavigate, favCount, onOpenModal 
                 {/* Купить — заголовок + всегда видимые подпункты */}
                 <div className="nav-drop-section">
                   <a href="#" className="nav-drop-section-title"
-                    onClick={e => { e.preventDefault(); onNavigate('buy'); closeSvc() }}>
+                    onClick={e => { e.preventDefault(); onNavigate('buy', {}); closeSvc() }}>
                     Купить
                   </a>
                   <div className="nav-drop-section-body">
                     {BUY_ITEMS.map(it => (
                       <a key={it.label} href="#" className="nav-drop-sub-item"
-                        onClick={e => { e.preventDefault(); onNavigate(it.page); closeSvc() }}>
+                        onClick={e => { e.preventDefault(); onNavigate('buy', it.filter); closeSvc() }}>
                         {it.label}
                       </a>
                     ))}

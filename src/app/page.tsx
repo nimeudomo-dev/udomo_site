@@ -1,6 +1,6 @@
 "use client";
 import { useState, useRef, useCallback, useEffect } from "react";
-import Navbar from "@/components/Navbar";
+import Navbar, { type NavFilterPreset } from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Projects from "@/components/Projects";
 import Mortgage from "@/components/Mortgage";
@@ -34,16 +34,29 @@ export default function Home() {
   const [mortgageModalOpen, setMortgageModalOpen] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
   const { favIds, toggleFav, clearAll } = useFavorites();
+  const [buyPreset, setBuyPreset] = useState<{ filter: NavFilterPreset; seq: number }>({ filter: {}, seq: 0 });
 
   useEffect(() => {
     setCurrentPage(pageFromUrl());
     const handlePop = () => setCurrentPage(pageFromUrl());
     window.addEventListener("popstate", handlePop);
+    // Если открыли страницу с ?cta=1 — скроллим к форме
+    if (new URLSearchParams(window.location.search).get("cta") === "1") {
+      setTimeout(() => {
+        const el = document.getElementById("ctaSection");
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+        setTimeout(() => {
+          const input = document.querySelector(".cta-fi") as HTMLInputElement;
+          if (input) input.focus();
+        }, 600);
+      }, 200);
+    }
     return () => window.removeEventListener("popstate", handlePop);
   }, []);
 
-  const navigateTo = useCallback((page: string) => {
+  const navigateTo = useCallback((page: string, filterPreset?: NavFilterPreset) => {
     setCurrentPage(page as Page);
+    if (filterPreset) setBuyPreset(prev => ({ filter: filterPreset, seq: prev.seq + 1 }));
     const url = page === "home" ? "/" : `/?p=${page}`;
     window.history.pushState({}, "", url);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -113,7 +126,7 @@ export default function Home() {
 
       {/* BUY — listing page */}
       <div style={{ display: currentPage === "buy" ? "block" : "none" }}>
-        <PropertyListPage favIds={favIds} onToggleFav={toggleFav} />
+        <PropertyListPage favIds={favIds} onToggleFav={toggleFav} filterPreset={buyPreset} />
       </div>
 
       {/* COMING SOON PAGES */}

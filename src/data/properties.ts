@@ -16,6 +16,8 @@ export interface Property {
   publishedAt: string
   isNew?: boolean
   isHot?: boolean
+  lat?: number
+  lon?: number
 }
 
 export const PROPERTIES: Property[] = [

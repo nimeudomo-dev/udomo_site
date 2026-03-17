@@ -20,7 +20,7 @@ interface PropertyCardProps {
 
 export default function PropertyCard({ property, isFav = false, onToggleFav }: PropertyCardProps) {
   return (
-    <Link href={`/property/${property.id}`} className="prop-card">
+    <Link href={`/property/${property.id}`} className="prop-card" target="_blank" rel="noopener noreferrer">
       <div className="prop-card-img-wrap">
         <img src={property.images[0]} alt={property.address} className="prop-card-img" />
 

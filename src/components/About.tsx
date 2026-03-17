@@ -6,7 +6,7 @@ export default function About({ onOpenModal }: AboutProps) {
   return (
     <div id="page-about">
       {/* Hero */}
-      <div className="wrap" style={{ paddingTop: 80 }}>
+      <div className="wrap" style={{ paddingTop: 48 }}>
         <div className="about-hero">
           <div className="about-hero-text">
             <div className="sec-tag">О компании</div>
