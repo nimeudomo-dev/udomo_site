@@ -4,8 +4,9 @@ import type { Property } from '@/data/properties'
 import { RESIDENTIAL_GROUPS, COMMERCIAL_GROUPS, CATEGORY_GROUPS } from '@/components/PropertyFilter'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-declare global { interface Window { L: any } }
+declare global { interface Window { ymaps: any } }
 
+const YMAPS_KEY = '4a43ac3b-bbe7-4e03-b6bb-568b1f3fce70'
 const ROOMS_LIST = ['С', '1', '2', '3', '4+']
 
 interface MapFilter {
@@ -26,12 +27,21 @@ const defaultMapFilter: MapFilter = {
 
 function normalizeType(t: string) { return t === 'Вторичка' ? 'Вторичная' : t }
 
-function formatPrice(price: number): string {
+function formatPriceShort(price: number): string {
   if (price >= 1_000_000) {
     const m = price / 1_000_000
-    return `${m % 1 === 0 ? m : m.toFixed(1)} млн`
+    return `${m % 1 === 0 ? m : m.toFixed(1)}М`
   }
-  if (price >= 1000) return `${Math.round(price / 1000)} тыс`
+  if (price >= 1000) return `${Math.round(price / 1000)}К`
+  return `${price}₽`
+}
+
+function formatPriceFull(price: number): string {
+  if (price >= 1_000_000) {
+    const m = price / 1_000_000
+    return `${m % 1 === 0 ? m : m.toFixed(1)} млн ₽`
+  }
+  if (price >= 1000) return `${Math.round(price / 1000)} тыс ₽`
   return `${price} ₽`
 }
 
@@ -50,33 +60,62 @@ function parseFilterFromUrl(): MapFilter {
   }
 }
 
-function loadLeaflet(): Promise<void> {
-  return new Promise(resolve => {
-    if (window.L) { resolve(); return }
-
-    const link = document.createElement('link')
-    link.rel = 'stylesheet'
-    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-    document.head.appendChild(link)
-
+function loadYandexMaps(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    if (window.ymaps?.Map) { resolve(window.ymaps); return }
+    if (document.querySelector('script[data-ymaps]')) {
+      const poll = setInterval(() => {
+        if (window.ymaps?.Map) { clearInterval(poll); resolve(window.ymaps) }
+      }, 50)
+      return
+    }
     const script = document.createElement('script')
-    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
-    script.onload = () => resolve()
+    script.setAttribute('data-ymaps', '1')
+    script.src = `https://api-maps.yandex.ru/2.1/?apikey=${YMAPS_KEY}&lang=ru_RU`
+    script.onload = () => window.ymaps.ready(() => resolve(window.ymaps))
+    script.onerror = reject
     document.head.appendChild(script)
   })
 }
 
+function MapPopup({ property, onClose }: { property: Property; onClose: () => void }) {
+  return (
+    <div className="map-react-popup">
+      <button className="map-react-popup-close" onClick={onClose}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+      {property.images?.[0] && (
+        <img className="map-react-popup-img" src={property.images[0]} alt={property.address} />
+      )}
+      <div className="map-react-popup-body">
+        <div className="map-popup-type">{property.type}</div>
+        <div className="map-popup-price">{formatPriceFull(property.price)}</div>
+        <div className="map-popup-addr">
+          {property.address}{property.area ? ` · ${property.area} м²` : ''}
+          {property.floor ? ` · ${property.floor}/${property.totalFloors} эт.` : ''}
+        </div>
+        <a className="map-popup-link" href={`/property/${property.id}`} target="_blank">
+          Открыть объект →
+        </a>
+      </div>
+    </div>
+  )
+}
+
 export default function MapPage() {
-  const mapElRef   = useRef<HTMLDivElement>(null)
-  const mapRef     = useRef<any>(null)
-  const markersRef = useRef<any[]>([])
+  const mapElRef      = useRef<HTMLDivElement>(null)
+  const mapRef        = useRef<any>(null)
+  const collectionRef = useRef<any>(null)
+
   const [properties, setProperties] = useState<Property[]>([])
   const [mapReady, setMapReady]     = useState(false)
   const [filter, setFilter]         = useState<MapFilter>(defaultMapFilter)
+  const [selected, setSelected]     = useState<Property | null>(null)
 
   useEffect(() => { setFilter(parseFilterFromUrl()) }, [])
 
-  // Fetch properties
   useEffect(() => {
     fetch('/api/properties')
       .then(r => r.json())
@@ -86,26 +125,24 @@ export default function MapPage() {
       .catch(() => {})
   }, [])
 
-  // Init Leaflet map
   useEffect(() => {
     if (!mapElRef.current || mapRef.current) return
-    loadLeaflet().then(() => {
+    loadYandexMaps().then(ymaps => {
       if (!mapElRef.current || mapRef.current) return
-      const L = window.L
-      const map = L.map(mapElRef.current, { zoomControl: true }).setView([54.7355, 55.9663], 11)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 19,
-      }).addTo(map)
+      const map = new ymaps.Map(mapElRef.current, {
+        center: [54.7355, 55.9663],
+        zoom: 11,
+        controls: ['zoomControl'],
+      })
+      map.events.add('click', () => setSelected(null))
       mapRef.current = map
       setMapReady(true)
-    })
+    }).catch(() => {})
     return () => {
-      if (mapRef.current) { mapRef.current.remove(); mapRef.current = null }
+      if (mapRef.current) { mapRef.current.destroy(); mapRef.current = null }
     }
   }, [])
 
-  // Filter properties
   const filtered = useMemo(() => {
     const allResTypes = RESIDENTIAL_GROUPS.flatMap(g => g.values)
     const allComTypes = COMMERCIAL_GROUPS.flatMap(g => g.values)
@@ -123,7 +160,6 @@ export default function MapPage() {
     const pMax = filter.priceMax ? parseFloat(filter.priceMax) : null
     const aMin = filter.areaMin  ? parseFloat(filter.areaMin)  : null
     const aMax = filter.areaMax  ? parseFloat(filter.areaMax)  : null
-
     return properties.filter(p => {
       if (filter.deal !== 'all' && p.deal !== filter.deal) return false
       if (allowedTypes && !allowedTypes.includes(p.type)) return false
@@ -143,33 +179,24 @@ export default function MapPage() {
     })
   }, [properties, filter])
 
-  // Update markers
   useEffect(() => {
-    if (!mapReady || !mapRef.current) return
-    const L = window.L
+    if (!mapReady || !mapRef.current || !window.ymaps) return
+    const ymaps = window.ymaps
+    if (collectionRef.current) mapRef.current.geoObjects.remove(collectionRef.current)
 
-    markersRef.current.forEach(m => m.remove())
-    markersRef.current = []
-
+    const collection = new ymaps.GeoObjectCollection()
     filtered.forEach(p => {
       if (!p.lat || !p.lon) return
-      const icon = L.divIcon({
-        className: '',
-        html: `<div class="map-price-pin">${formatPrice(p.price)}</div>`,
-        iconAnchor: [32, 14],
-      })
-      const marker = L.marker([p.lat, p.lon], { icon })
-        .addTo(mapRef.current)
-        .bindPopup(`
-          <div class="map-popup">
-            <div class="map-popup-type">${p.type}</div>
-            <div class="map-popup-price">${formatPrice(p.price)}</div>
-            <div class="map-popup-addr">${p.address}${p.area ? ` · ${p.area} м²` : ''}</div>
-            <a class="map-popup-link" href="/property/${p.id}" target="_blank">Открыть →</a>
-          </div>
-        `)
-      markersRef.current.push(marker)
+      const placemark = new ymaps.Placemark(
+        [p.lat, p.lon],
+        { iconContent: formatPriceShort(p.price) },
+        { preset: 'islands#tealStretchyIcon' }
+      )
+      placemark.events.add('click', () => setSelected(p))
+      collection.add(placemark)
     })
+    mapRef.current.geoObjects.add(collection)
+    collectionRef.current = collection
   }, [filtered, mapReady])
 
   const set = (patch: Partial<MapFilter>) => setFilter(f => ({ ...f, ...patch }))
@@ -182,11 +209,8 @@ export default function MapPage() {
   const toggleDeal = (d: 'buy' | 'rent') =>
     set({ deal: filter.deal === d ? 'all' : d })
 
-  const subGroups = filter.propClass === 'commercial'
-    ? COMMERCIAL_GROUPS
-    : filter.propClass === 'residential'
-      ? RESIDENTIAL_GROUPS
-      : null
+  const subGroups = filter.propClass === 'commercial' ? COMMERCIAL_GROUPS
+    : filter.propClass === 'residential' ? RESIDENTIAL_GROUPS : null
 
   const showRooms = filter.propClass === 'apartments' ||
     (filter.propClass !== 'commercial' && ['Новостройки', 'Вторичная', 'Дома / Коттеджи', 'Апартаменты'].includes(filter.category))
@@ -195,8 +219,6 @@ export default function MapPage() {
 
   return (
     <div className="map-page">
-
-      {/* Sidebar */}
       <aside className="map-sidebar">
         <div className="map-sb-head">
           <a href="/?p=buy" className="map-back-btn">
@@ -210,20 +232,19 @@ export default function MapPage() {
         <div className="map-sb-body">
           <div className="map-f-section">
             <div className="map-f-btns">
-              <button className={`map-f-btn${filter.propClass === 'residential' ? ' active' : ''}`}
-                onClick={() => setClass('residential')}>Жилая</button>
-              <button className={`map-f-btn${filter.propClass === 'commercial' ? ' active' : ''}`}
-                onClick={() => setClass('commercial')}>Коммерческая</button>
-              <button className={`map-f-btn${filter.propClass === 'apartments' ? ' active' : ''}`}
-                onClick={() => setClass('apartments')}>Апартаменты</button>
+              {(['residential', 'commercial', 'apartments'] as const).map(cls => (
+                <button key={cls} className={`map-f-btn${filter.propClass === cls ? ' active' : ''}`}
+                  onClick={() => setClass(cls)}>
+                  {cls === 'residential' ? 'Жилая' : cls === 'commercial' ? 'Коммерческая' : 'Апартаменты'}
+                </button>
+              ))}
             </div>
           </div>
 
           <div className="map-f-section">
             <div className="map-f-btns">
               {(['buy', 'rent'] as const).map(d => (
-                <button key={d}
-                  className={`map-f-btn${filter.deal === d ? ' active' : ''}`}
+                <button key={d} className={`map-f-btn${filter.deal === d ? ' active' : ''}`}
                   onClick={() => toggleDeal(d)}>
                   {d === 'buy' ? 'Купить' : 'Аренда'}
                 </button>
@@ -251,11 +272,8 @@ export default function MapPage() {
               <div className="map-f-label">Комнатность</div>
               <div className="map-f-rooms">
                 {ROOMS_LIST.map(r => (
-                  <button key={r}
-                    className={`map-f-btn map-f-room-btn${filter.rooms.includes(r) ? ' active' : ''}`}
-                    onClick={() => toggleRoom(r)}>
-                    {r}
-                  </button>
+                  <button key={r} className={`map-f-btn map-f-room-btn${filter.rooms.includes(r) ? ' active' : ''}`}
+                    onClick={() => toggleRoom(r)}>{r}</button>
                 ))}
               </div>
             </div>
@@ -297,7 +315,10 @@ export default function MapPage() {
         </div>
       </aside>
 
-      <div className="map-area" ref={mapElRef} />
+      <div className="map-area-wrap">
+        <div className="map-area" ref={mapElRef} />
+        {selected && <MapPopup property={selected} onClose={() => setSelected(null)} />}
+      </div>
     </div>
   )
 }

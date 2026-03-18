@@ -8,18 +8,24 @@ import Navbar from '@/components/Navbar'
 import { useFavorites } from '@/hooks/useFavorites'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-declare global { interface Window { L: any } }
+declare global { interface Window { ymaps: any } }
 
-function loadLeaflet(): Promise<void> {
-  return new Promise(resolve => {
-    if (typeof window !== 'undefined' && window.L) { resolve(); return }
-    const link = document.createElement('link')
-    link.rel = 'stylesheet'
-    link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-    document.head.appendChild(link)
+const YMAPS_KEY = '4a43ac3b-bbe7-4e03-b6bb-568b1f3fce70'
+
+function loadYandexMaps(): Promise<any> {
+  return new Promise((resolve, reject) => {
+    if (window.ymaps?.Map) { resolve(window.ymaps); return }
+    if (document.querySelector('script[data-ymaps]')) {
+      const poll = setInterval(() => {
+        if (window.ymaps?.Map) { clearInterval(poll); resolve(window.ymaps) }
+      }, 50)
+      return
+    }
     const script = document.createElement('script')
-    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
-    script.onload = () => resolve()
+    script.setAttribute('data-ymaps', '1')
+    script.src = `https://api-maps.yandex.ru/2.1/?apikey=${YMAPS_KEY}&lang=ru_RU`
+    script.onload = () => window.ymaps.ready(() => resolve(window.ymaps))
+    script.onerror = reject
     document.head.appendChild(script)
   })
 }
@@ -30,24 +36,23 @@ function PropertyMap({ lat, lon, address }: { lat: number; lon: number; address:
 
   useEffect(() => {
     if (!mapElRef.current || mapRef.current) return
-    loadLeaflet().then(() => {
+    loadYandexMaps().then(ymaps => {
       if (!mapElRef.current || mapRef.current) return
-      const L = window.L
-      const map = L.map(mapElRef.current, { zoomControl: true, scrollWheelZoom: false })
-        .setView([lat, lon], 15)
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-        maxZoom: 19,
-      }).addTo(map)
-      const icon = L.divIcon({
-        className: '',
-        html: `<div class="pd-map-marker"></div>`,
-        iconAnchor: [12, 12],
+      const map = new ymaps.Map(mapElRef.current, {
+        center: [lat, lon],
+        zoom: 15,
+        controls: ['zoomControl'],
+        behaviors: ['drag', 'dblClickZoom', 'multiTouch'],
       })
-      L.marker([lat, lon], { icon }).addTo(map).bindPopup(address).openPopup()
+      const placemark = new ymaps.Placemark([lat, lon], {
+        balloonContent: address,
+      }, {
+        preset: 'islands#tealDotIcon',
+      })
+      map.geoObjects.add(placemark)
       mapRef.current = map
-    })
-    return () => { if (mapRef.current) { mapRef.current.remove(); mapRef.current = null } }
+    }).catch(() => {})
+    return () => { if (mapRef.current) { mapRef.current.destroy(); mapRef.current = null } }
   }, [lat, lon, address])
 
   return <div ref={mapElRef} className="pd-map-leaflet" />
@@ -111,8 +116,6 @@ export default function PropertyPage() {
             <a href="/">Главная</a>
             <span>/</span>
             <a href="/?p=buy">Объекты</a>
-            <span>/</span>
-            <span>{property.type}, {property.address}</span>
           </nav>
 
           <div className="pd-layout">
@@ -204,11 +207,11 @@ export default function PropertyPage() {
                 <div className="pd-obj-id">id {property.id}</div>
 
                 <h1 className="pd-obj-title">
-                  {property.type}{property.rooms ? `, ${property.rooms}-комн.` : ''} — {property.area} м²
+                  {property.rooms ? `${property.rooms}-комн. — ` : ''}{property.area} м²
                 </h1>
 
                 <div className="pd-price-wrap">
-                  <div className="pd-price">{formatPrice(property.price, property.deal)}</div>
+                  <div className="pd-price">{property.price.toLocaleString('ru')} {property.deal === 'rent' ? '₽/мес' : '₽'}</div>
                   {property.pricePerM2 > 0 && (
                     <div className="pd-price-m2">{property.pricePerM2.toLocaleString('ru')} ₽/м²</div>
                   )}
@@ -216,9 +219,17 @@ export default function PropertyPage() {
 
                 <div className="pd-stats-grid">
                   <div className="pd-stat">
-                    <span className="pd-stat-lbl">Площадь</span>
+                    <span className="pd-stat-lbl">Общая</span>
                     <span className="pd-stat-val">{property.area} м²</span>
                   </div>
+                  {(() => {
+                    const living = property.characteristics?.find(c => c.label === 'Жилая площадь')?.value
+                    const kitchen = property.characteristics?.find(c => c.label === 'Площадь кухни')?.value
+                    return <>
+                      {living && <div className="pd-stat"><span className="pd-stat-lbl">Жилая</span><span className="pd-stat-val">{living}</span></div>}
+                      {kitchen && <div className="pd-stat"><span className="pd-stat-lbl">Кухня</span><span className="pd-stat-val">{kitchen}</span></div>}
+                    </>
+                  })()}
                   {property.floor && (
                     <div className="pd-stat">
                       <span className="pd-stat-lbl">Этаж</span>

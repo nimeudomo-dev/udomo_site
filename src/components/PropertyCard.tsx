@@ -4,11 +4,6 @@ import { Property } from '@/data/properties'
 
 export function formatPrice(p: number, deal: 'buy' | 'rent') {
   const suffix = deal === 'rent' ? ' ₽/мес' : ' ₽'
-  if (p >= 1_000_000) {
-    const m = p / 1_000_000
-    return (Number.isInteger(m) ? m : m.toFixed(1)) + ' млн' + suffix
-  }
-  if (p >= 1_000) return Math.round(p / 1_000) + ' тыс' + suffix
   return p.toLocaleString('ru') + suffix
 }
 
@@ -56,8 +51,10 @@ export default function PropertyCard({ property, isFav = false, onToggleFav }: P
         </div>
 
         <div className="prop-card-meta">
-          {property.rooms && <span>{property.rooms}-комн.</span>}
-          {property.rooms && <span className="prop-dot">·</span>}
+          {property.rooms === 0 && <span>Студия</span>}
+          {property.rooms != null && property.rooms > 0 && !['Офис','Склад','Торговое','ПСН','Производство','Здание','Гостиница','Общепит','Готовый бизнес','Коммерческая земля','Коммерческая','Гараж','Земельный участок'].includes(property.type) && <span>{property.rooms}-комн.</span>}
+          {property.rooms != null && property.rooms > 0 && !['Офис','Склад','Торговое','ПСН','Производство','Здание','Гостиница','Общепит','Готовый бизнес','Коммерческая земля','Коммерческая','Гараж','Земельный участок'].includes(property.type) && <span className="prop-dot">·</span>}
+          {property.rooms === 0 && <span className="prop-dot">·</span>}
           <span>{property.type}</span>
           <span className="prop-dot">·</span>
           <span>{property.area} м²</span>

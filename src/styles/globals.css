@@ -1715,7 +1715,7 @@ footer::before {
 .prop-dot { color: var(--muted); font-size: 11px; }
 .prop-card-address {
   display: flex; align-items: flex-start; gap: 5px;
-  font-size: 13px; color: var(--slate); margin-top: auto; padding-top: 6px; line-height: 1.4;
+  font-size: 13px; color: var(--slate); margin-top: auto; padding-top: 8px; line-height: 1.4;
 }
 .prop-card-district { font-size: 12px; color: var(--muted); margin-top: 1px; }
 
@@ -1816,12 +1816,16 @@ footer::before {
 .pd-price   { font-size: 28px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
 .pd-price-m2 { font-size: 13.5px; color: var(--muted); margin-top: 3px; }
 .pd-stats-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px;
-  background: #f7f8fc; border-radius: 12px; padding: 14px 16px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-bottom: 16px;
+  background: #f7f8fc; border-radius: 12px; overflow: hidden;
 }
-.pd-stat { display: flex; flex-direction: column; gap: 3px; }
-.pd-stat-lbl { font-size: 11.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
-.pd-stat-val { font-size: 16px; font-weight: 700; color: var(--ink); }
+.pd-stat {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 12px 14px; border-right: 1px solid rgba(0,0,0,0.06);
+}
+.pd-stat:last-child { border-right: none; }
+.pd-stat-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.pd-stat-val { font-size: 15px; font-weight: 700; color: var(--ink); }
 .pd-addr-line {
   display: flex; align-items: flex-start; gap: 7px;
   font-size: 13px; color: var(--slate); line-height: 1.5; margin-bottom: 20px;
@@ -2094,24 +2098,81 @@ footer::before {
   font-family: Inter, sans-serif; transition: color 0.15s;
 }
 .map-reset-btn:hover { color: #e53e3e; }
-.map-area { flex: 1; }
+.map-area-wrap { flex: 1; position: relative; overflow: hidden; }
+.map-area { width: 100%; height: 100%; }
 
-/* Leaflet price pin */
-.map-price-pin {
-  background: white; border: 1.5px solid var(--teal); border-radius: 100px;
-  padding: 4px 10px; font-size: 12px; font-weight: 700; color: var(--ink);
-  white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  font-family: Inter, sans-serif; cursor: pointer;
+/* React popup over map */
+.map-react-popup {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  z-index: 100; width: 300px;
+  background: white; border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  overflow: hidden; font-family: Inter, sans-serif;
 }
-.map-price-pin:hover { background: var(--teal); color: white; }
+.map-react-popup-close {
+  position: absolute; top: 10px; right: 10px; z-index: 2;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(255,255,255,0.9); border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+.map-react-popup-img { width: 100%; height: 160px; object-fit: cover; display: block; }
+.map-react-popup-body { padding: 14px 16px 16px; }
+
+/* Yandex price pin */
+.map-price-pin {
+  position: relative;
+  display: inline-block;
+  background: white;
+  border: 1.5px solid var(--teal);
+  border-radius: 8px;
+  padding: 5px 11px;
+  font-size: 12px; font-weight: 700; color: var(--ink);
+  white-space: nowrap;
+  box-shadow: 0 3px 12px rgba(27,200,160,0.25);
+  font-family: Inter, sans-serif; cursor: pointer;
+  line-height: 1.2;
+}
+.map-price-pin::after {
+  content: '';
+  position: absolute;
+  bottom: -7px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 7px solid var(--teal);
+}
+.map-price-pin::before {
+  content: '';
+  position: absolute;
+  bottom: -5px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid white;
+  z-index: 1;
+}
+.map-price-pin:hover { background: var(--teal); color: white; cursor: pointer; }
+.map-price-pin:hover::before { border-top-color: var(--teal); }
 
 /* Leaflet popup */
-.map-popup { font-family: Inter, sans-serif; min-width: 160px; }
-.map-popup-type { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
-.map-popup-price { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
-.map-popup-addr { font-size: 12px; color: var(--slate); margin-bottom: 10px; }
-.map-popup-link { display: inline-block; font-size: 13px; font-weight: 700; color: var(--teal); text-decoration: none; }
-.map-popup-link:hover { text-decoration: underline; }
+.map-popup { font-family: Inter, sans-serif; min-width: 200px; padding: 4px 2px 2px; }
+.map-popup-type {
+  display: inline-block;
+  font-size: 10px; font-weight: 600; color: var(--teal);
+  text-transform: uppercase; letter-spacing: .06em;
+  background: rgba(27,200,160,0.1); border-radius: 4px;
+  padding: 2px 7px; margin-bottom: 8px;
+}
+.map-popup-price { font-size: 20px; font-weight: 800; color: var(--ink); margin-bottom: 4px; line-height: 1; }
+.map-popup-addr { font-size: 12px; color: var(--slate); margin-bottom: 12px; line-height: 1.4; }
+.map-popup-link {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; color: white;
+  background: var(--teal); border-radius: 6px;
+  padding: 6px 14px; text-decoration: none; transition: opacity .15s;
+}
+.map-popup-link:hover { opacity: .85; text-decoration: none; }
 
 /* Property detail map */
 .pd-map-leaflet { height: 320px; border-radius: 12px; overflow: hidden; margin-top: 14px; border: 1px solid rgba(0,0,0,0.08); }

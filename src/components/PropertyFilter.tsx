@@ -34,7 +34,6 @@ export const RESIDENTIAL_GROUPS = [
   { label: 'Дома / Коттеджи',    values: ['Дом / Коттедж', 'Таунхаус', 'Дача'] },
   { label: 'Земельные участки',  values: ['Земельный участок'] },
   { label: 'Гаражи / Кладовые', values: ['Гараж'] },
-  { label: 'Апартаменты',        values: ['Апартаменты'] },
   { label: 'Комнаты / Доли',     values: ['Комната'] },
 ]
 
@@ -107,7 +106,7 @@ export default function PropertyFilter({ filter, onChange, resultCount, onMapVie
   const cat = filter.category
   const showDetailedFilters = cat !== '' || filter.propClass === 'apartments'
   const showRooms = filter.propClass === 'apartments' ||
-    (filter.propClass !== 'commercial' && ['Новостройки', 'Вторичная', 'Дома / Коттеджи', 'Апартаменты'].includes(cat))
+    (filter.propClass !== 'commercial' && ['Новостройки', 'Вторичная', 'Дома / Коттеджи'].includes(cat))
   const showFloor = filter.propClass !== 'apartments' &&
     !['Земельные участки', 'Гаражи / Кладовые', 'Коммерческая земля'].includes(cat)
 
@@ -209,7 +208,7 @@ export default function PropertyFilter({ filter, onChange, resultCount, onMapVie
 
             {showRooms && (
               <div className="pf-field">
-                <label className="pf-label">Кол-комнат</label>
+                <label className="pf-label">Комнатность</label>
                 <div className="pf-rooms">
                   {ROOMS.map(r => (
                     <button key={r}

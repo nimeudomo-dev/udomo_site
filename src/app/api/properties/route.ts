@@ -35,6 +35,24 @@ function num(v: unknown): number {
   return isNaN(n) ? 0 : n
 }
 
+function normalizeAddress(addr: string): string {
+  return addr
+    // Убираем вариации "Республика Башкортостан"
+    .replace(/Республика\s+Башкортостан,?\s*/gi, '')
+    .replace(/Респ\.?\s*Башкортостан,?\s*/gi, '')
+    .replace(/РБ,?\s*/g, '')
+    // Убираем "городской округ Уфа," и "г\.о\. Уфа,"
+    .replace(/городской\s+округ\s+[^,]+,?\s*/gi, '')
+    .replace(/г\.?\s*о\.?\s*[^,]+,?\s*/gi, '')
+    // Нормализуем "г Уфа" / "г. Уфа" → "Уфа"
+    .replace(/^г\.?\s+/i, '')
+    .replace(/,\s*г\.?\s+(\S)/g, ', $1')
+    // Убираем лишние запятые и пробелы
+    .replace(/^,\s*/, '')
+    .replace(/,\s*,/g, ',')
+    .trim()
+}
+
 function getImages(raw: unknown): string[] {
   if (!raw) return []
   if (Array.isArray(raw)) return raw.map(String).filter(Boolean)
@@ -155,8 +173,9 @@ function mapOffer(offer: any): Property | null {
     const pricePerM2 = area > 0 ? Math.round(price / area) : 0
 
     const loc      = offer.location || {}
-    const address  = str(loc['address-full'] || loc.address || loc.street || '')
-    const district = str(loc['locality-name'] || loc.region || '')
+    const address  = normalizeAddress(str(loc['address-full'] || loc.address || loc.street || ''))
+    const localityRaw = str(loc['locality-name'] || loc.region || '')
+    const district = localityRaw && !address.toLowerCase().includes(localityRaw.toLowerCase()) ? localityRaw : ''
 
     const images      = getImages(offer.image)
     const description = decodeHtml(str(offer.description))
@@ -164,7 +183,9 @@ function mapOffer(offer: any): Property | null {
 
     const floor       = offer.floor            ? parseInt(str(offer.floor))            : undefined
     const totalFloors = offer['floors-total']  ? parseInt(str(offer['floors-total']))  : undefined
-    const rooms       = offer.rooms            ? parseInt(str(offer.rooms))            : undefined
+    const isStudio    = str(offer.studio) === 'true' || str(offer.studio) === '1'
+    const roomsRaw    = offer.rooms ? parseInt(str(offer.rooms)) : undefined
+    const rooms       = isStudio ? 0 : roomsRaw
 
     const type = mapType(category, str(offer['commercial-type']))
 
@@ -178,7 +199,7 @@ function mapOffer(offer: any): Property | null {
       price,
       pricePerM2,
       area,
-      rooms:      rooms || undefined,
+      rooms:      rooms !== undefined ? rooms : undefined,
       floor,
       totalFloors,
       address,

@@ -1,5 +1,6 @@
 'use client'
-import { PROPERTIES } from '@/data/properties'
+import { useState, useEffect } from 'react'
+import type { Property } from '@/data/properties'
 import PropertyCard from './PropertyCard'
 
 interface Props {
@@ -10,24 +11,31 @@ interface Props {
 }
 
 export default function FavoritesPage({ favIds, onToggleFav, onClearAll, onNavigate }: Props) {
-  const properties = PROPERTIES.filter(p => favIds.includes(p.id))
+  const [allProperties, setAllProperties] = useState<Property[]>([])
+
+  useEffect(() => {
+    fetch('/api/properties')
+      .then(r => r.json())
+      .then(setAllProperties)
+      .catch(() => {})
+  }, [])
+
+  const properties = allProperties.filter(p => favIds.includes(p.id as number))
   const count = properties.length
 
   return (
     <div className="fav-root">
       <div className="wrap">
 
-        {/* Header */}
         <div className="fav-head">
           <div>
-            <h1 className="fav-title">
-              Избранное
-              {count > 0 && <span className="fav-title-count">{count}</span>}
-            </h1>
+            <h1 className="fav-title">Избранное</h1>
             <p className="fav-sub">
-              {count === 0
+              {favIds.length === 0
                 ? 'Сохраняйте понравившиеся объекты, чтобы вернуться к ним позже'
-                : `${count} объект${count === 1 ? '' : count < 5 ? 'а' : 'ов'} сохранено`}
+                : count > 0
+                  ? `${count} объект${count === 1 ? '' : count < 5 ? 'а' : 'ов'} сохранено`
+                  : 'Загрузка...'}
             </p>
           </div>
           {count > 0 && (
@@ -43,8 +51,7 @@ export default function FavoritesPage({ favIds, onToggleFav, onClearAll, onNavig
           )}
         </div>
 
-        {count === 0 ? (
-          /* Empty state */
+        {favIds.length === 0 ? (
           <div className="fav-empty">
             <div className="fav-empty-icon">
               <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
@@ -60,24 +67,25 @@ export default function FavoritesPage({ favIds, onToggleFav, onClearAll, onNavig
             </div>
             <h2 className="fav-empty-title">Пока здесь пусто</h2>
             <p className="fav-empty-text">
-              Нажимайте на <svg width="14" height="14" viewBox="0 0 18 18" fill="none" style={{ display: 'inline', verticalAlign: 'middle', margin: '0 2px' }}>
+              Нажимайте на{' '}
+              <svg width="14" height="14" viewBox="0 0 18 18" fill="none" style={{ display: 'inline', verticalAlign: 'middle', margin: '0 2px' }}>
                 <path d="M9 15S2 10.5 2 6a3.5 3.5 0 0 1 5.95-2.48L9 4.8l1.05-1.28A3.5 3.5 0 0 1 16 6C16 10.5 9 15 9 15z"
                   stroke="#8892b0" strokeWidth="1.6" strokeLinejoin="round" />
-              </svg> на карточках объектов, чтобы добавить их в избранное
+              </svg>{' '}
+              на карточках объектов, чтобы добавить их в избранное
             </p>
             <button className="btn btn-primary fav-cta" onClick={() => onNavigate('buy')}>
               Смотреть объекты →
             </button>
           </div>
         ) : (
-          /* Grid */
           <div className="pl-grid">
             {properties.map(p => (
               <PropertyCard
                 key={p.id}
                 property={p}
                 isFav={true}
-                onToggleFav={() => onToggleFav(p.id)}
+                onToggleFav={() => onToggleFav(p.id as number)}
               />
             ))}
           </div>
