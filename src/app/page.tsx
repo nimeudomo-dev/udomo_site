@@ -17,10 +17,11 @@ import SellPage from "@/components/SellPage";
 import { useFavorites } from "@/hooks/useFavorites";
 import EscrowPage from "@/components/EscrowPage";
 import MortgagePage from "@/components/MortgagePage";
+import OnlinePage from "@/components/OnlinePage";
 
-type Page = "home" | "buy" | "projects" | "rent" | "sell" | "escrow" | "mortgage" | "about" | "contacts" | "favorites" | "blog" | "careers" | "tourism";
+type Page = "home" | "buy" | "projects" | "rent" | "sell" | "escrow" | "mortgage" | "about" | "contacts" | "favorites" | "blog" | "careers" | "tourism" | "online";
 
-const VALID_PAGES: Page[] = ["home", "buy", "projects", "rent", "sell", "escrow", "mortgage", "about", "contacts", "favorites", "blog", "careers", "tourism"];
+const VALID_PAGES: Page[] = ["home", "buy", "projects", "rent", "sell", "escrow", "mortgage", "about", "contacts", "favorites", "blog", "careers", "tourism", "online"];
 
 function pageFromUrl(): Page {
   if (typeof window === "undefined") return "home";
@@ -101,6 +102,11 @@ export default function Home() {
       {/* CONTACTS */}
       <div style={{ display: currentPage === "contacts" ? "block" : "none" }}>
         <Contacts onOpenModal={() => setModalOpen(true)} />
+      </div>
+
+      {/* ONLINE */}
+      <div style={{ display: currentPage === "online" ? "block" : "none" }}>
+        <OnlinePage />
       </div>
 
       {/* FAVORITES */}

@@ -13,105 +13,195 @@ interface Country {
   name: string
   flag: string
   code: string
-  digits: number // ожидаемое кол-во цифр в номере
+  digits: number
+  iso: string
 }
 
 const COUNTRIES: Country[] = [
   // СНГ
-  { name: 'Россия',          flag: '🇷🇺', code: '+7',   digits: 10 },
-  { name: 'Беларусь',        flag: '🇧🇾', code: '+375', digits: 9  },
-  { name: 'Казахстан',       flag: '🇰🇿', code: '+7',   digits: 10 },
-  { name: 'Украина',         flag: '🇺🇦', code: '+380', digits: 9  },
-  { name: 'Узбекистан',      flag: '🇺🇿', code: '+998', digits: 9  },
-  { name: 'Азербайджан',     flag: '🇦🇿', code: '+994', digits: 9  },
-  { name: 'Армения',         flag: '🇦🇲', code: '+374', digits: 8  },
-  { name: 'Грузия',          flag: '🇬🇪', code: '+995', digits: 9  },
-  { name: 'Кыргызстан',      flag: '🇰🇬', code: '+996', digits: 9  },
-  { name: 'Таджикистан',     flag: '🇹🇯', code: '+992', digits: 9  },
-  { name: 'Туркменистан',    flag: '🇹🇲', code: '+993', digits: 8  },
-  { name: 'Молдова',         flag: '🇲🇩', code: '+373', digits: 8  },
+  { name: 'Россия',           flag: '🇷🇺', code: '+7',   digits: 10, iso: 'RU' },
+  { name: 'Беларусь',         flag: '🇧🇾', code: '+375', digits: 9,  iso: 'BY' },
+  { name: 'Казахстан',        flag: '🇰🇿', code: '+7',   digits: 10, iso: 'KZ' },
+  { name: 'Украина',          flag: '🇺🇦', code: '+380', digits: 9,  iso: 'UA' },
+  { name: 'Узбекистан',       flag: '🇺🇿', code: '+998', digits: 9,  iso: 'UZ' },
+  { name: 'Азербайджан',      flag: '🇦🇿', code: '+994', digits: 9,  iso: 'AZ' },
+  { name: 'Армения',          flag: '🇦🇲', code: '+374', digits: 8,  iso: 'AM' },
+  { name: 'Грузия',           flag: '🇬🇪', code: '+995', digits: 9,  iso: 'GE' },
+  { name: 'Кыргызстан',       flag: '🇰🇬', code: '+996', digits: 9,  iso: 'KG' },
+  { name: 'Таджикистан',      flag: '🇹🇯', code: '+992', digits: 9,  iso: 'TJ' },
+  { name: 'Туркменистан',     flag: '🇹🇲', code: '+993', digits: 8,  iso: 'TM' },
+  { name: 'Молдова',          flag: '🇲🇩', code: '+373', digits: 8,  iso: 'MD' },
   // Европа
-  { name: 'Германия',        flag: '🇩🇪', code: '+49',  digits: 10 },
-  { name: 'Великобритания',  flag: '🇬🇧', code: '+44',  digits: 10 },
-  { name: 'Франция',         flag: '🇫🇷', code: '+33',  digits: 9  },
-  { name: 'Италия',          flag: '🇮🇹', code: '+39',  digits: 10 },
-  { name: 'Испания',         flag: '🇪🇸', code: '+34',  digits: 9  },
-  { name: 'Польша',          flag: '🇵🇱', code: '+48',  digits: 9  },
-  { name: 'Нидерланды',      flag: '🇳🇱', code: '+31',  digits: 9  },
-  { name: 'Австрия',         flag: '🇦🇹', code: '+43',  digits: 10 },
-  { name: 'Швейцария',       flag: '🇨🇭', code: '+41',  digits: 9  },
-  { name: 'Чехия',           flag: '🇨🇿', code: '+420', digits: 9  },
-  { name: 'Швеция',          flag: '🇸🇪', code: '+46',  digits: 9  },
-  { name: 'Норвегия',        flag: '🇳🇴', code: '+47',  digits: 8  },
-  { name: 'Финляндия',       flag: '🇫🇮', code: '+358', digits: 9  },
-  { name: 'Дания',           flag: '🇩🇰', code: '+45',  digits: 8  },
-  { name: 'Португалия',      flag: '🇵🇹', code: '+351', digits: 9  },
-  { name: 'Латвия',          flag: '🇱🇻', code: '+371', digits: 8  },
-  { name: 'Литва',           flag: '🇱🇹', code: '+370', digits: 8  },
-  { name: 'Эстония',         flag: '🇪🇪', code: '+372', digits: 7  },
+  { name: 'Германия',         flag: '🇩🇪', code: '+49',  digits: 10, iso: 'DE' },
+  { name: 'Великобритания',   flag: '🇬🇧', code: '+44',  digits: 10, iso: 'GB' },
+  { name: 'Франция',          flag: '🇫🇷', code: '+33',  digits: 9,  iso: 'FR' },
+  { name: 'Италия',           flag: '🇮🇹', code: '+39',  digits: 10, iso: 'IT' },
+  { name: 'Испания',          flag: '🇪🇸', code: '+34',  digits: 9,  iso: 'ES' },
+  { name: 'Польша',           flag: '🇵🇱', code: '+48',  digits: 9,  iso: 'PL' },
+  { name: 'Нидерланды',       flag: '🇳🇱', code: '+31',  digits: 9,  iso: 'NL' },
+  { name: 'Австрия',          flag: '🇦🇹', code: '+43',  digits: 10, iso: 'AT' },
+  { name: 'Швейцария',        flag: '🇨🇭', code: '+41',  digits: 9,  iso: 'CH' },
+  { name: 'Чехия',            flag: '🇨🇿', code: '+420', digits: 9,  iso: 'CZ' },
+  { name: 'Швеция',           flag: '🇸🇪', code: '+46',  digits: 9,  iso: 'SE' },
+  { name: 'Норвегия',         flag: '🇳🇴', code: '+47',  digits: 8,  iso: 'NO' },
+  { name: 'Финляндия',        flag: '🇫🇮', code: '+358', digits: 9,  iso: 'FI' },
+  { name: 'Дания',            flag: '🇩🇰', code: '+45',  digits: 8,  iso: 'DK' },
+  { name: 'Португалия',       flag: '🇵🇹', code: '+351', digits: 9,  iso: 'PT' },
+  { name: 'Латвия',           flag: '🇱🇻', code: '+371', digits: 8,  iso: 'LV' },
+  { name: 'Литва',            flag: '🇱🇹', code: '+370', digits: 8,  iso: 'LT' },
+  { name: 'Эстония',          flag: '🇪🇪', code: '+372', digits: 7,  iso: 'EE' },
   // Азия
-  { name: 'Турция',          flag: '🇹🇷', code: '+90',  digits: 10 },
-  { name: 'ОАЭ',             flag: '🇦🇪', code: '+971', digits: 9  },
-  { name: 'Таиланд',         flag: '🇹🇭', code: '+66',  digits: 9  },
-  { name: 'Китай',           flag: '🇨🇳', code: '+86',  digits: 11 },
-  { name: 'Япония',          flag: '🇯🇵', code: '+81',  digits: 10 },
-  { name: 'Индия',           flag: '🇮🇳', code: '+91',  digits: 10 },
-  { name: 'Израиль',         flag: '🇮🇱', code: '+972', digits: 9  },
-  { name: 'Саудовская Аравия',flag: '🇸🇦', code: '+966', digits: 9  },
-  { name: 'Египет',          flag: '🇪🇬', code: '+20',  digits: 10 },
+  { name: 'Турция',           flag: '🇹🇷', code: '+90',  digits: 10, iso: 'TR' },
+  { name: 'ОАЭ',              flag: '🇦🇪', code: '+971', digits: 9,  iso: 'AE' },
+  { name: 'Таиланд',          flag: '🇹🇭', code: '+66',  digits: 9,  iso: 'TH' },
+  { name: 'Китай',            flag: '🇨🇳', code: '+86',  digits: 11, iso: 'CN' },
+  { name: 'Япония',           flag: '🇯🇵', code: '+81',  digits: 10, iso: 'JP' },
+  { name: 'Индия',            flag: '🇮🇳', code: '+91',  digits: 10, iso: 'IN' },
+  { name: 'Израиль',          flag: '🇮🇱', code: '+972', digits: 9,  iso: 'IL' },
+  { name: 'Саудовская Аравия',flag: '🇸🇦', code: '+966', digits: 9,  iso: 'SA' },
+  { name: 'Египет',           flag: '🇪🇬', code: '+20',  digits: 10, iso: 'EG' },
   // Америка
-  { name: 'США',             flag: '🇺🇸', code: '+1',   digits: 10 },
-  { name: 'Канада',          flag: '🇨🇦', code: '+1',   digits: 10 },
+  { name: 'США',              flag: '🇺🇸', code: '+1',   digits: 10, iso: 'US' },
+  { name: 'Канада',           flag: '🇨🇦', code: '+1',   digits: 10, iso: 'CA' },
 ]
 
-function formatPhone(digits: string, maxLen: number): string {
-  const d = digits.slice(0, maxLen)
-  if (maxLen === 10) {
-    // (000) 000-00-00
-    let r = ''
-    if (d.length > 0) r += '(' + d.slice(0, 3)
-    if (d.length >= 4) r += ') ' + d.slice(3, 6)
-    if (d.length >= 7) r += '-' + d.slice(6, 8)
-    if (d.length >= 9) r += '-' + d.slice(8, 10)
-    return r
+function getPlaceholder(code: string): string {
+  switch (code) {
+    case '+7':   return '(000) 000-00-00'
+    case '+375': return '(00) 000-00-00'
+    case '+380': return '(00) 000-00-00'
+    case '+998': return '(00) 000-00-00'
+    case '+994': return '(00) 000-00-00'
+    case '+374': return '(00) 00-00-00'
+    case '+995': return '(000) 00-00-00'
+    case '+996': return '(000) 000-000'
+    case '+992': return '(00) 000-00-00'
+    case '+993': return '(00) 00-00-00'
+    case '+373': return '(00) 000-000'
+    default:     return '000 000 000'
   }
-  if (maxLen === 9) {
-    // 000 000 000
-    let r = ''
-    if (d.length > 0) r += d.slice(0, 3)
-    if (d.length >= 4) r += ' ' + d.slice(3, 6)
-    if (d.length >= 7) r += ' ' + d.slice(6, 9)
-    return r
+}
+
+function formatPhone(digits: string, code: string): string {
+  switch (code) {
+    case '+7': {
+      // (000) 000-00-00
+      const d = digits.slice(0, 10)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 3)
+      if (d.length >= 4) r += ') ' + d.slice(3, 6)
+      if (d.length >= 7) r += '-' + d.slice(6, 8)
+      if (d.length >= 9) r += '-' + d.slice(8, 10)
+      return r
+    }
+    case '+375': {
+      // (00) 000-00-00
+      const d = digits.slice(0, 9)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 2)
+      if (d.length >= 3) r += ') ' + d.slice(2, 5)
+      if (d.length >= 6) r += '-' + d.slice(5, 7)
+      if (d.length >= 8) r += '-' + d.slice(7, 9)
+      return r
+    }
+    case '+380': {
+      // (00) 000-00-00
+      const d = digits.slice(0, 9)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 2)
+      if (d.length >= 3) r += ') ' + d.slice(2, 5)
+      if (d.length >= 6) r += '-' + d.slice(5, 7)
+      if (d.length >= 8) r += '-' + d.slice(7, 9)
+      return r
+    }
+    case '+998': {
+      // (00) 000-00-00
+      const d = digits.slice(0, 9)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 2)
+      if (d.length >= 3) r += ') ' + d.slice(2, 5)
+      if (d.length >= 6) r += '-' + d.slice(5, 7)
+      if (d.length >= 8) r += '-' + d.slice(7, 9)
+      return r
+    }
+    case '+994': {
+      // (00) 000-00-00
+      const d = digits.slice(0, 9)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 2)
+      if (d.length >= 3) r += ') ' + d.slice(2, 5)
+      if (d.length >= 6) r += '-' + d.slice(5, 7)
+      if (d.length >= 8) r += '-' + d.slice(7, 9)
+      return r
+    }
+    case '+374': {
+      // (00) 00-00-00
+      const d = digits.slice(0, 8)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 2)
+      if (d.length >= 3) r += ') ' + d.slice(2, 4)
+      if (d.length >= 5) r += '-' + d.slice(4, 6)
+      if (d.length >= 7) r += '-' + d.slice(6, 8)
+      return r
+    }
+    case '+995': {
+      // (000) 00-00-00
+      const d = digits.slice(0, 9)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 3)
+      if (d.length >= 4) r += ') ' + d.slice(3, 5)
+      if (d.length >= 6) r += '-' + d.slice(5, 7)
+      if (d.length >= 8) r += '-' + d.slice(7, 9)
+      return r
+    }
+    case '+996': {
+      // (000) 000-000
+      const d = digits.slice(0, 9)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 3)
+      if (d.length >= 4) r += ') ' + d.slice(3, 6)
+      if (d.length >= 7) r += '-' + d.slice(6, 9)
+      return r
+    }
+    case '+992': {
+      // (00) 000-00-00
+      const d = digits.slice(0, 9)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 2)
+      if (d.length >= 3) r += ') ' + d.slice(2, 5)
+      if (d.length >= 6) r += '-' + d.slice(5, 7)
+      if (d.length >= 8) r += '-' + d.slice(7, 9)
+      return r
+    }
+    case '+993': {
+      // (00) 00-00-00
+      const d = digits.slice(0, 8)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 2)
+      if (d.length >= 3) r += ') ' + d.slice(2, 4)
+      if (d.length >= 5) r += '-' + d.slice(4, 6)
+      if (d.length >= 7) r += '-' + d.slice(6, 8)
+      return r
+    }
+    case '+373': {
+      // (00) 000-000
+      const d = digits.slice(0, 8)
+      let r = ''
+      if (d.length > 0) r += '(' + d.slice(0, 2)
+      if (d.length >= 3) r += ') ' + d.slice(2, 5)
+      if (d.length >= 6) r += '-' + d.slice(5, 8)
+      return r
+    }
+    default: {
+      return digits.slice(0, 10)
+    }
   }
-  if (maxLen === 11) {
-    // 000 0000 0000
-    let r = ''
-    if (d.length > 0) r += d.slice(0, 3)
-    if (d.length >= 4) r += ' ' + d.slice(3, 7)
-    if (d.length >= 8) r += ' ' + d.slice(7, 11)
-    return r
-  }
-  if (maxLen === 8) {
-    // 0000 0000
-    let r = ''
-    if (d.length > 0) r += d.slice(0, 4)
-    if (d.length >= 5) r += ' ' + d.slice(4, 8)
-    return r
-  }
-  if (maxLen === 7) {
-    // 000 0000
-    let r = ''
-    if (d.length > 0) r += d.slice(0, 3)
-    if (d.length >= 4) r += ' ' + d.slice(3, 7)
-    return r
-  }
-  return d
 }
 
 export default function CallModal({
   isOpen, onClose,
   title = 'Закажите звонок',
-  subtitle = 'Оставьте контакты — перезвоним в ближайшее время'
+  subtitle = 'Самый быстрый способ связи'
 }: CallModalProps) {
   const [name, setName] = useState('')
   const [phoneDigits, setPhoneDigits] = useState('')
@@ -197,7 +287,11 @@ export default function CallModal({
   }
 
   const filtered = search
-    ? COUNTRIES.filter(c => c.name.toLowerCase().includes(search.toLowerCase()) || c.code.includes(search))
+    ? COUNTRIES.filter(c =>
+        c.name.toLowerCase().includes(search.toLowerCase()) ||
+        c.code.includes(search) ||
+        c.iso.toLowerCase().includes(search.toLowerCase())
+      )
     : COUNTRIES
 
   return (
@@ -209,9 +303,13 @@ export default function CallModal({
 
         {sent ? (
           <div className="modal-success">
-            <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-            <div className="mf-section-title" style={{ fontSize: 20 }}>Заявка принята!</div>
-            <div className="mf-section-sub" style={{ marginTop: 8 }}>Перезвоним в течение 15 минут.</div>
+            <div className="modal-success-icon">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+                <path d="M5 12l5 5L19 7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div className="modal-success-title">Заявка принята!</div>
+            <div className="modal-success-sub">Мы скоро свяжемся с вами</div>
           </div>
         ) : (
           <>
@@ -220,19 +318,18 @@ export default function CallModal({
             {/* Мессенджеры */}
             <div className="mf-section">
               <div className="mf-section-title">Напишите в мессенджер</div>
-              <div className="mf-section-sub">Ответим прямо сейчас</div>
+              <div className="mf-section-sub">Ответим в ближайшее время</div>
               <div className="mf-messengers">
-                <a href="https://t.me/udomo_ufa" target="_blank" rel="noopener" className="mf-messenger-btn">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#0088cc">
-                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                  </svg>
+                <a href="https://t.me/udomo_ufa" target="_blank" rel="noopener" className="mf-messenger-btn mf-tg">
+                  <div className="mf-messenger-icon">
+                    <img src="/icons/telegram.png" width="26" height="26" alt="" style={{ objectFit: 'contain' }} />
+                  </div>
                   Telegram
                 </a>
-                <a href="https://vk.me/udomo_ufa" target="_blank" rel="noopener" className="mf-messenger-btn">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="12" fill="#0077FF"/>
-                    <path d="M6.5 8.5h2.2c.3 0 .5.2.6.5l1 2.8c.1.4.7.4.9 0l1-2.8c.1-.3.3-.5.6-.5H15c.4 0 .7.4.5.8l-2.8 5.8c-.1.3-.4.4-.7.4H9.5c-.3 0-.6-.2-.7-.4L6.1 9.3c-.2-.4.1-.8.4-.8z" fill="white"/>
-                  </svg>
+                <a href="https://vk.me/udomo_ufa" target="_blank" rel="noopener" className="mf-messenger-btn mf-max">
+                  <div className="mf-messenger-icon">
+                    <img src="/icons/max.webp" width="22" height="22" alt="" style={{ objectFit: 'contain' }} />
+                  </div>
                   MAX
                 </a>
               </div>
@@ -314,8 +411,8 @@ export default function CallModal({
                     <input
                       className={`mf-input mf-phone-input${phoneError ? ' mf-input--error' : ''}`}
                       type="tel"
-                      placeholder={country.digits === 10 ? '(000) 000-00-00' : '0'.repeat(country.digits)}
-                      value={formatPhone(phoneDigits, country.digits)}
+                      placeholder={getPlaceholder(country.code)}
+                      value={formatPhone(phoneDigits, country.code)}
                       onChange={e => handlePhoneChange(e.target.value)}
                     />
                   </div>

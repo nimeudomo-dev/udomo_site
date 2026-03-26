@@ -10,40 +10,32 @@ export default function ComingSoon({ title, onBack }: ComingSoonProps) {
     <div className="coming-soon-wrap">
       <div className="coming-soon-card">
 
-        {/* Animated building icon */}
+        {/* Анимированный домик */}
         <div className="coming-soon-icon">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
-            <rect x="8" y="20" width="22" height="36" rx="3" fill="var(--teal)" opacity="0.15"/>
-            <rect x="8" y="20" width="22" height="36" rx="3" stroke="var(--teal2)" strokeWidth="1.8"/>
-            <rect x="34" y="10" width="22" height="46" rx="3" fill="var(--teal)" opacity="0.25"/>
-            <rect x="34" y="10" width="22" height="46" rx="3" stroke="var(--teal2)" strokeWidth="1.8"/>
-            <rect x="13" y="26" width="5" height="5" rx="1" fill="var(--teal2)" opacity="0.6"/>
-            <rect x="22" y="26" width="5" height="5" rx="1" fill="var(--teal2)" opacity="0.6"/>
-            <rect x="13" y="36" width="5" height="5" rx="1" fill="var(--teal2)" opacity="0.6"/>
-            <rect x="22" y="36" width="5" height="5" rx="1" fill="var(--teal2)" opacity="0.6"/>
-            <rect x="39" y="17" width="5" height="5" rx="1" fill="var(--teal2)" opacity="0.8"/>
-            <rect x="49" y="17" width="5" height="5" rx="1" fill="var(--teal2)" opacity="0.8"/>
-            <rect x="39" y="27" width="5" height="5" rx="1" fill="var(--teal2)" opacity="0.8"/>
-            <rect x="49" y="27" width="5" height="5" rx="1" fill="var(--teal2)" opacity="0.8"/>
-            <rect x="39" y="37" width="5" height="5" rx="1" fill="var(--teal2)" opacity="0.8"/>
-            <rect x="49" y="37" width="5" height="5" rx="1" fill="var(--teal2)" opacity="0.8"/>
-            {/* Crane */}
-            <line x1="19" y1="6" x2="19" y2="20" stroke="var(--teal2)" strokeWidth="1.8" strokeLinecap="round"/>
-            <line x1="10" y1="6" x2="34" y2="6" stroke="var(--teal2)" strokeWidth="1.8" strokeLinecap="round"/>
-            <line x1="28" y1="6" x2="28" y2="14" stroke="var(--teal2)" strokeWidth="1.4" strokeLinecap="round" strokeDasharray="2 2"/>
+          <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+            {/* Тень */}
+            <ellipse cx="36" cy="66" rx="18" ry="4" fill="var(--teal)" opacity="0.12" className="cs-shadow"/>
+            {/* Дом */}
+            <rect x="16" y="36" width="40" height="28" rx="3" fill="var(--teal)" opacity="0.15"/>
+            <rect x="16" y="36" width="40" height="28" rx="3" stroke="var(--teal2)" strokeWidth="1.8"/>
+            {/* Крыша */}
+            <path d="M10 38L36 14L62 38" stroke="var(--teal2)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+            {/* Дверь */}
+            <rect x="29" y="48" width="14" height="16" rx="2" fill="var(--teal2)" opacity="0.25"/>
+            <rect x="29" y="48" width="14" height="16" rx="2" stroke="var(--teal2)" strokeWidth="1.5"/>
+            {/* Окно */}
+            <rect x="19" y="42" width="10" height="8" rx="1.5" fill="var(--teal2)" opacity="0.3"/>
+            <rect x="43" y="42" width="10" height="8" rx="1.5" fill="var(--teal2)" opacity="0.3"/>
+            {/* Ключ */}
+            <circle cx="56" cy="22" r="5" stroke="var(--teal2)" strokeWidth="1.6" fill="none"/>
+            <path d="M60 26l6 6M64 30l2 2M66 32l2-2" stroke="var(--teal2)" strokeWidth="1.6" strokeLinecap="round"/>
           </svg>
         </div>
 
-        <div className="coming-soon-label">Скоро</div>
         <h1 className="coming-soon-title">{title}</h1>
         <p className="coming-soon-text">
-          Мы активно работаем над этим разделом.<br/>
-          Совсем скоро здесь появится всё необходимое.
+          Данная страница ушла выбирать квартиру,<br/>вернётся позже
         </p>
-
-        <div className="coming-soon-dots">
-          <span /><span /><span />
-        </div>
 
         <button className="btn btn-dark coming-soon-btn" onClick={onBack}>
           ← На главную

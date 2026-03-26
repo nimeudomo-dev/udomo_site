@@ -31,11 +31,11 @@ export default function FavoritesPage({ favIds, onToggleFav, onClearAll, onNavig
           <div>
             <h1 className="fav-title">Избранное</h1>
             <p className="fav-sub">
-              {favIds.length === 0
-                ? 'Сохраняйте понравившиеся объекты, чтобы вернуться к ним позже'
-                : count > 0
-                  ? `${count} объект${count === 1 ? '' : count < 5 ? 'а' : 'ов'} сохранено`
-                  : 'Загрузка...'}
+              {count > 0
+                ? `${count} объект${count === 1 ? '' : count < 5 ? 'а' : 'ов'} сохранено`
+                : count === 0 && favIds.length > 0
+                  ? 'Загрузка...'
+                  : ''}
             </p>
           </div>
           {count > 0 && (
@@ -53,26 +53,14 @@ export default function FavoritesPage({ favIds, onToggleFav, onClearAll, onNavig
 
         {favIds.length === 0 ? (
           <div className="fav-empty">
-            <div className="fav-empty-icon">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none">
-                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-                  stroke="url(#fav-grad)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                <defs>
-                  <linearGradient id="fav-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#1bc8a0" />
-                    <stop offset="100%" stopColor="#9b3fc8" />
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            <h2 className="fav-empty-title">Пока здесь пусто</h2>
+            <h2 className="fav-empty-title">Нет добавленных объектов</h2>
             <p className="fav-empty-text">
               Нажимайте на{' '}
               <svg width="14" height="14" viewBox="0 0 18 18" fill="none" style={{ display: 'inline', verticalAlign: 'middle', margin: '0 2px' }}>
                 <path d="M9 15S2 10.5 2 6a3.5 3.5 0 0 1 5.95-2.48L9 4.8l1.05-1.28A3.5 3.5 0 0 1 16 6C16 10.5 9 15 9 15z"
                   stroke="#8892b0" strokeWidth="1.6" strokeLinejoin="round" />
               </svg>{' '}
-              на карточках объектов, чтобы добавить их в избранное
+              в карточках объектов, чтобы добавить их в избранное
             </p>
             <button className="btn btn-primary fav-cta" onClick={() => onNavigate('buy')}>
               Смотреть объекты →

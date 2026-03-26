@@ -250,7 +250,7 @@ export default function PropertyPage() {
                     8 347 298-08-99
                   </a>
                   <button className="btn btn-outline" onClick={() => setModalOpen(true)}>
-                    Заказать звонок
+                    Получить консультацию
                   </button>
                 </div>
 
