@@ -117,7 +117,7 @@ export default function Contacts({ onOpenModal }: ContactsProps) {
                 </svg>
                 <div>
                   <div>Получить консультацию</div>
-                  <div className="ci-call-sub">Ответим за 5 минут</div>
+                  <div className="ci-call-sub">Перезвоним в течение 10 минут</div>
                 </div>
               </button>
             </div>

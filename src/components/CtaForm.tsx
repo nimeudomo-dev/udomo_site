@@ -29,8 +29,8 @@ const CtaForm = forwardRef<HTMLDivElement>((_, ref) => {
       <div className="cta-block">
         <div className="cta-left">
           <div className="cta-lbl">Бесплатная консультация</div>
-          <div className="cta-title">Подберём<br/>недвижимость<br/>под вашу задачу</div>
-          <div className="cta-sub">Расскажите, что важно — и мы подготовим персональную подборку объектов в Уфе с понятной экономикой.</div>
+          <div className="cta-title">Подберём<br/>недвижимость<br/>под ваш бюджет и цель</div>
+          <div className="cta-sub">Предложим подходящие варианты и рассчитаем выгоду.</div>
         </div>
         <div className="cta-right">
           {sent ? (
@@ -39,13 +39,14 @@ const CtaForm = forwardRef<HTMLDivElement>((_, ref) => {
             <>
               <div className="cta-inputs">
                 <input className="cta-fi" type="text" placeholder="Ваше имя"
-                  value={name} onChange={e => setName(e.target.value)} />
-                <input className="cta-fi" type="tel" placeholder="Телефон / WhatsApp"
-                  value={phone} onChange={e => setPhone(e.target.value)} />
+                  value={name} onChange={e => setName(e.target.value.replace(/[^a-zA-Zа-яёА-ЯЁ\s\-]/g, ''))} />
+                <input className="cta-fi" type="tel" placeholder="Телефон"
+                  value={phone} onChange={e => setPhone(e.target.value.replace(/[^0-9+\-\s()]/g, ''))} />
               </div>
               <button className="cta-submit" onClick={handleSubmit} disabled={loading}>
-                {loading ? 'Отправляем...' : 'Получить подборку бесплатно →'}
+                {loading ? 'Отправляем...' : 'Получить подборку →'}
               </button>
+              <div className="cta-pd">Нажимая кнопку «Получить подборку», вы соглашаетесь с <a href="#">политикой обработки персональных данных</a></div>
             </>
           )}
         </div>

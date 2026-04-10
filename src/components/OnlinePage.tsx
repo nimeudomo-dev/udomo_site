@@ -17,14 +17,6 @@ const MAIN_SOCIALS = [
     icon: <img src="/icons/youtube.png" width="28" height="28" alt="YouTube" style={{ objectFit: 'contain' }} />,
     cls: 'onl-yt',
   },
-  {
-    name: 'Instagram',
-    handle: 'udomo_ufa',
-    href: 'https://www.instagram.com/udomo_ufa',
-    desc: 'Фото и истории',
-    icon: <img src="/icons/instagram.png" width="28" height="28" alt="Instagram" style={{ objectFit: 'contain' }} />,
-    cls: 'onl-ig',
-  },
 ]
 
 const PANORAMA_SOCIALS = [
@@ -69,17 +61,12 @@ export default function OnlinePage() {
       </div>
 
       <div className="sec wrap" style={{ paddingTop: 16, paddingBottom: 60 }}>
-        <div className="onl-section-title">Панорама — коттеджные посёлки</div>
+        <div className="onl-section-title">Панорама — коттеджный посёлок</div>
         <div className="onl-grid">
           {PANORAMA_SOCIALS.map(s => <SocialCard key={s.name} s={s} />)}
         </div>
       </div>
 
-      <div className="wrap" style={{ paddingBottom: 60 }}>
-        <div className="onl-meta-note">
-          Instagram принадлежит Meta Platforms Inc. — организация признана экстремистской, её деятельность запрещена на территории России.
-        </div>
-      </div>
     </div>
   )
 }
