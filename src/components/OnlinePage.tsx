@@ -47,10 +47,10 @@ function SocialCard({ s }: { s: typeof MAIN_SOCIALS[0] }) {
 export default function OnlinePage() {
   return (
     <div id="page-online">
-      <div className="wrap" style={{ paddingTop: 96 }}>
+      <div className="wrap" style={{ paddingTop: 90 }}>
         <div className="sec-tag">Компания</div>
-        <div className="sec-title" style={{ marginBottom: 8 }}>Будь с нами</div>
-        <div className="sec-sub">Подписывайтесь и следите за нашими новостями</div>
+        <div className="sec-title" style={{ marginBottom: 8, textTransform: 'none' }}>Следите за нами</div>
+        <div className="sec-sub">Следите за новыми объектами, обзорами и обновлениями проектов</div>
       </div>
 
       <div className="sec wrap" style={{ paddingTop: 32, paddingBottom: 20 }}>

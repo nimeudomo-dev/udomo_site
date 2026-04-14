@@ -1,8 +1,10 @@
 'use client'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 interface ContactsProps {
   onOpenModal: () => void
+  autoOpenReq?: boolean
+  onReqOpened?: () => void
 }
 
 const LAT = 54.737843
@@ -11,16 +13,37 @@ const ORG_ID = '186212681099'
 const ROUTE_URL = `https://yandex.ru/maps/org/udomo/${ORG_ID}/?from=mapframe&ll=${LON}%2C${LAT}&pt=${LON}%2C${LAT}&z=19`
 const MAP_URL = `https://yandex.ru/map-widget/v1/org/${ORG_ID}/?ll=${LON}%2C${LAT}&z=18&theme=light`
 
-export default function Contacts({ onOpenModal }: ContactsProps) {
+export default function Contacts({ onOpenModal, autoOpenReq, onReqOpened }: ContactsProps) {
   const [reqOpen, setReqOpen] = useState(false)
+  const reqSectionsRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (autoOpenReq) {
+      setReqOpen(true)
+      onReqOpened?.()
+      setTimeout(() => {
+        reqSectionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      }, 100)
+    }
+  }, [autoOpenReq])
+
+  const handleReqToggle = () => {
+    const opening = !reqOpen
+    setReqOpen(opening)
+    if (opening) {
+      setTimeout(() => {
+        reqSectionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      }, 50)
+    }
+  }
 
   return (
     <div id="page-contacts">
 
       {/* Шапка */}
-      <div className="wrap" style={{ paddingTop: 96 }}>
+      <div className="wrap" style={{ paddingTop: 90 }}>
         <div className="sec-tag">Контакты</div>
-        <div className="sec-title" style={{ marginBottom: 8 }}>Свяжитесь с нами</div>
+        <div className="sec-title" style={{ marginBottom: 8, textTransform: 'none' }}>Свяжитесь с нами</div>
         <div className="sec-sub">Работаем официально по договору</div>
       </div>
 
@@ -143,7 +166,7 @@ export default function Contacts({ onOpenModal }: ContactsProps) {
               <span className="req-main-sep" />
               <span className="req-main-item"><span className="req-main-key">ОГРНИП</span> 317028000057633</span>
             </div>
-            <button className="req-toggle" onClick={() => setReqOpen(v => !v)}>
+            <button className="req-toggle" onClick={handleReqToggle}>
               {reqOpen ? 'Скрыть' : 'Юридическая информация'}
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
                 style={{ transform: reqOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>
@@ -154,7 +177,7 @@ export default function Contacts({ onOpenModal }: ContactsProps) {
 
           {/* Дополнительное — скрываемое */}
           {reqOpen && (
-            <div className="req-sections">
+            <div className="req-sections" ref={reqSectionsRef}>
               <div className="req-section">
                 <div className="req-section-label">Адреса</div>
                 <div className="req-rows">

@@ -32,6 +32,7 @@ function pageFromUrl(): Page {
 export default function Home() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [modalOpen, setModalOpen] = useState(false);
+  const [contactsReqOpen, setContactsReqOpen] = useState(false);
   const [mortgageModalOpen, setMortgageModalOpen] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
   const { favIds, toggleFav, clearAll } = useFavorites();
@@ -56,6 +57,13 @@ export default function Home() {
   }, []);
 
   const navigateTo = useCallback((page: string, filterPreset?: NavFilterPreset) => {
+    if (page === 'contacts#req') {
+      setCurrentPage('contacts');
+      setContactsReqOpen(true);
+      window.history.pushState({}, "", "/?p=contacts");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     setCurrentPage(page as Page);
     if (filterPreset) setBuyPreset(prev => ({ filter: filterPreset, seq: prev.seq + 1 }));
     const url = page === "home" ? "/" : `/?p=${page}`;
@@ -101,7 +109,11 @@ export default function Home() {
 
       {/* CONTACTS */}
       <div style={{ display: currentPage === "contacts" ? "block" : "none" }}>
-        <Contacts onOpenModal={() => setModalOpen(true)} />
+        <Contacts
+          onOpenModal={() => setModalOpen(true)}
+          autoOpenReq={contactsReqOpen}
+          onReqOpened={() => setContactsReqOpen(false)}
+        />
       </div>
 
       {/* ONLINE */}
@@ -148,6 +160,7 @@ export default function Home() {
         </div>
       ))}
 
+      <div className="ft-bridge" />
       <Footer onNavigate={navigateTo} />
 
       <CallModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
