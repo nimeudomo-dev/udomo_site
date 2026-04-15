@@ -10,20 +10,27 @@ interface ContactsProps {
 const LAT = 54.737843
 const LON = 55.948182
 const ORG_ID = '186212681099'
-const ROUTE_URL = `https://yandex.ru/maps/org/udomo/${ORG_ID}/?from=mapframe&ll=${LON}%2C${LAT}&pt=${LON}%2C${LAT}&z=19`
 const MAP_URL = `https://yandex.ru/map-widget/v1/org/${ORG_ID}/?ll=${LON}%2C${LAT}&z=18&theme=light`
 
 export default function Contacts({ onOpenModal, autoOpenReq, onReqOpened }: ContactsProps) {
   const [reqOpen, setReqOpen] = useState(false)
   const reqSectionsRef = useRef<HTMLDivElement>(null)
 
+  const scrollIfNeeded = () => {
+    const el = reqSectionsRef.current
+    if (!el) return
+    const rect = el.getBoundingClientRect()
+    const fullyVisible = rect.top >= 0 && rect.bottom <= window.innerHeight
+    if (!fullyVisible) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'end' })
+    }
+  }
+
   useEffect(() => {
     if (autoOpenReq) {
       setReqOpen(true)
       onReqOpened?.()
-      setTimeout(() => {
-        reqSectionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-      }, 100)
+      setTimeout(scrollIfNeeded, 100)
     }
   }, [autoOpenReq])
 
@@ -31,9 +38,7 @@ export default function Contacts({ onOpenModal, autoOpenReq, onReqOpened }: Cont
     const opening = !reqOpen
     setReqOpen(opening)
     if (opening) {
-      setTimeout(() => {
-        reqSectionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' })
-      }, 50)
+      setTimeout(scrollIfNeeded, 50)
     }
   }
 

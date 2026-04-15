@@ -16,6 +16,8 @@ import FavoritesPage from "@/components/FavoritesPage";
 import SellPage from "@/components/SellPage";
 import { useFavorites } from "@/hooks/useFavorites";
 import EscrowPage from "@/components/EscrowPage";
+import CareersPage from "@/components/CareersPage";
+import BlogPage from "@/components/BlogPage";
 import MortgagePage from "@/components/MortgagePage";
 import OnlinePage from "@/components/OnlinePage";
 
@@ -131,6 +133,16 @@ export default function Home() {
         />
       </div>
 
+      {/* BLOG */}
+      <div style={{ display: currentPage === "blog" ? "block" : "none" }}>
+        <BlogPage />
+      </div>
+
+      {/* CAREERS */}
+      <div style={{ display: currentPage === "careers" ? "block" : "none" }}>
+        <CareersPage />
+      </div>
+
       {/* LEAD PAGES */}
       <div style={{ display: currentPage === "sell" ? "block" : "none" }}>
         <SellPage />
@@ -151,8 +163,6 @@ export default function Home() {
       {([
         { page: "projects", title: "Проекты" },
         { page: "rent",     title: "Аренда" },
-        { page: "blog",     title: "Блог" },
-        { page: "careers",  title: "Вакансии" },
         { page: "tourism",  title: "Туризм" },
       ] as { page: Page; title: string }[]).map(({ page, title }) => (
         <div key={page} style={{ display: currentPage === page ? "block" : "none" }}>
