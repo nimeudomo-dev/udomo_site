@@ -1,11 +1,9 @@
 'use client'
 import { useState } from 'react'
+import { useModal } from '@/context/ModalContext'
 
-interface AboutProps {
-  onOpenModal: () => void
-}
-
-export default function About({ onOpenModal }: AboutProps) {
+export default function About() {
+  const { openModal: onOpenModal } = useModal()
   const [ctaName, setCtaName] = useState('')
   const [ctaPhone, setCtaPhone] = useState('')
   const [ctaSent, setCtaSent] = useState(false)
@@ -42,8 +40,8 @@ export default function About({ onOpenModal }: AboutProps) {
             {[
               { num: '8+', lbl: 'лет на рынке' },
               { num: '1200+', lbl: 'сделок закрыто' },
-              { num: '150+', lbl: 'объектов в продаже' },
-              { num: '98%', lbl: 'клиентов довольны' },
+              { num: '250+', lbl: 'объектов в продаже' },
+              { num: '98%', lbl: 'довольных клиентов' },
             ].map((s, i) => (
               <div key={i} className="about-stat">
                 <div className="about-stat-num">{s.num}</div>
@@ -202,7 +200,7 @@ export default function About({ onOpenModal }: AboutProps) {
                 <button className="about-cta-btn" onClick={handleCtaSubmit}>
                   Получить подборку →
                 </button>
-                <div className="about-cta-pd">Нажимая кнопку «Получить подборку», вы соглашаетесь с <a href="#">политикой обработки персональных данных</a></div>
+                <div className="about-cta-pd">Нажимая кнопку «Получить подборку», вы соглашаетесь с <a href="/docs/privacy.pdf" target="_blank" rel="noopener noreferrer">политикой обработки персональных данных</a></div>
               </>
             )}
           </div>

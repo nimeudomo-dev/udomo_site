@@ -428,7 +428,7 @@ export default function CallModal({
                   )}
                 </button>
                 <div className="mf-note">
-                  Отправляя форму, я соглашаюсь с <a href="#">политикой обработки персональных данных</a>
+                  Отправляя форму, я соглашаюсь с <a href="/docs/privacy.pdf" target="_blank" rel="noopener noreferrer">политикой обработки персональных данных</a>
                 </div>
               </div>
             </div>

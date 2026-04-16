@@ -1,16 +1,13 @@
 'use client'
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import type { Property } from '@/data/properties'
 import PropertyCard from './PropertyCard'
+import { useFavorites } from '@/hooks/useFavorites'
 
-interface Props {
-  favIds: number[]
-  onToggleFav: (id: number) => void
-  onClearAll: () => void
-  onNavigate: (page: string) => void
-}
-
-export default function FavoritesPage({ favIds, onToggleFav, onClearAll, onNavigate }: Props) {
+export default function FavoritesPage() {
+  const router = useRouter()
+  const { favIds, toggleFav: onToggleFav, clearAll: onClearAll } = useFavorites()
   const [allProperties, setAllProperties] = useState<Property[]>([])
 
   useEffect(() => {
@@ -62,7 +59,7 @@ export default function FavoritesPage({ favIds, onToggleFav, onClearAll, onNavig
               </svg>{' '}
               в карточках объектов, чтобы добавить их в избранное
             </p>
-            <button className="btn btn-primary fav-cta" onClick={() => onNavigate('buy')}>
+            <button className="btn btn-primary fav-cta" onClick={() => router.push('/buy')}>
               Смотреть объекты →
             </button>
           </div>

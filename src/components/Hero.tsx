@@ -33,7 +33,16 @@ const slides = [
 
 const DELAY = 6000
 
-export default function Hero({ onScrollToCta }: { onScrollToCta: () => void }) {
+function scrollToCta() {
+  const el = document.getElementById('ctaSection')
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  setTimeout(() => {
+    const input = document.querySelector('.cta-fi') as HTMLInputElement
+    if (input) input.focus()
+  }, 600)
+}
+
+export default function Hero() {
   const [cur, setCur] = useState(0)
   const [progress, setProgress] = useState(0)
   const startRef = useRef<number>(Date.now())
@@ -105,8 +114,8 @@ export default function Hero({ onScrollToCta }: { onScrollToCta: () => void }) {
               </h1>
               <p className="slide-sub">{slide.sub}</p>
               <div className="slide-actions">
-                <a className="btn btn-white" href="#" onClick={e => { e.preventDefault(); onScrollToCta() }}>{slide.btn1}</a>
-                <a className="btn btn-ghost" href="#" onClick={e => { e.preventDefault(); onScrollToCta() }}>{slide.btn2}</a>
+                <a className="btn btn-white" href="#" onClick={e => { e.preventDefault(); scrollToCta() }}>{slide.btn1}</a>
+                <a className="btn btn-ghost" href="#" onClick={e => { e.preventDefault(); scrollToCta() }}>{slide.btn2}</a>
               </div>
             </div>
           </div>

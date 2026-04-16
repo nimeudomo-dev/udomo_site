@@ -1,46 +1,20 @@
 'use client'
-import { useState, useRef, useEffect } from 'react'
-
-interface ContactsProps {
-  onOpenModal: () => void
-  autoOpenReq?: boolean
-  onReqOpened?: () => void
-}
+import { useState, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
+import { useModal } from '@/context/ModalContext'
 
 const LAT = 54.737843
 const LON = 55.948182
 const ORG_ID = '186212681099'
 const MAP_URL = `https://yandex.ru/map-widget/v1/org/${ORG_ID}/?ll=${LON}%2C${LAT}&z=18&theme=light`
 
-export default function Contacts({ onOpenModal, autoOpenReq, onReqOpened }: ContactsProps) {
-  const [reqOpen, setReqOpen] = useState(false)
+export default function Contacts() {
+  const { openModal: onOpenModal } = useModal()
+  const searchParams = useSearchParams()
+  const [reqOpen, setReqOpen] = useState(() => searchParams.get('req') === '1')
   const reqSectionsRef = useRef<HTMLDivElement>(null)
 
-  const scrollIfNeeded = () => {
-    const el = reqSectionsRef.current
-    if (!el) return
-    const rect = el.getBoundingClientRect()
-    const fullyVisible = rect.top >= 0 && rect.bottom <= window.innerHeight
-    if (!fullyVisible) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'end' })
-    }
-  }
-
-  useEffect(() => {
-    if (autoOpenReq) {
-      setReqOpen(true)
-      onReqOpened?.()
-      setTimeout(scrollIfNeeded, 100)
-    }
-  }, [autoOpenReq])
-
-  const handleReqToggle = () => {
-    const opening = !reqOpen
-    setReqOpen(opening)
-    if (opening) {
-      setTimeout(scrollIfNeeded, 50)
-    }
-  }
+  const handleReqToggle = () => setReqOpen(v => !v)
 
   return (
     <div id="page-contacts">
@@ -171,16 +145,16 @@ export default function Contacts({ onOpenModal, autoOpenReq, onReqOpened }: Cont
               <span className="req-main-sep" />
               <span className="req-main-item"><span className="req-main-key">ОГРНИП</span> 317028000057633</span>
             </div>
-            <button className="req-toggle" onClick={handleReqToggle}>
-              {reqOpen ? 'Скрыть' : 'Юридическая информация'}
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
-                style={{ transform: reqOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>
-                <path d="M3 5l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
           </div>
 
-          {/* Дополнительное — скрываемое */}
+          <button className="req-toggle" onClick={() => setReqOpen(v => !v)}>
+            {reqOpen ? 'Скрыть' : 'Показать полностью'}
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"
+              style={{ transform: reqOpen ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>
+              <path d="M3 5l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+
           {reqOpen && (
             <div className="req-sections" ref={reqSectionsRef}>
               <div className="req-section">

@@ -53,7 +53,7 @@ export default function EscrowPage() {
       subtitle="Проведём весь процесс от проверки документов до регистрации права собственности."
       benefits={benefits}
       formTitle="Получить консультацию"
-      formSubtitle="Расскажем про все этапы и стоимость — бесплатно и без обязательств"
+      formSubtitle="Разберём вашу ситуацию и предложим подходящие варианты"
       formSource="escrow_page"
       stats={stats}
     />

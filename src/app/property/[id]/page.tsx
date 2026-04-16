@@ -2,10 +2,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import type { Property } from '@/data/properties'
-import { formatPrice } from '@/components/PropertyCard'
-import CallModal from '@/components/CallModal'
-import Navbar from '@/components/Navbar'
 import { useFavorites } from '@/hooks/useFavorites'
+import { useModal } from '@/context/ModalContext'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global { interface Window { ymaps: any } }
@@ -66,9 +64,9 @@ export default function PropertyPage() {
   const [loading, setLoading]   = useState(true)
   const [notFound, setNotFound] = useState(false)
   const [activeImg, setActiveImg] = useState(0)
-  const [modalOpen, setModalOpen] = useState(false)
 
-  const { favIds, isFav, toggleFav } = useFavorites()
+  const { isFav, toggleFav } = useFavorites()
+  const { openModal } = useModal()
 
   useEffect(() => {
     fetch('/api/properties')
@@ -102,20 +100,13 @@ export default function PropertyPage() {
 
   return (
     <>
-      <Navbar
-        currentPage="buy"
-        onNavigate={(page) => router.push(page === 'home' ? '/' : `/?p=${page}`)}
-        favCount={favIds.length}
-        onOpenModal={() => setModalOpen(true)}
-      />
-
       <main className="pd-root">
         <div className="wrap">
           {/* Breadcrumb */}
           <nav className="pd-breadcrumb">
             <a href="/">Главная</a>
             <span>/</span>
-            <a href="/?p=buy">Объекты</a>
+            <a href="/buy">Объекты</a>
           </nav>
 
           <div className="pd-layout">
@@ -249,7 +240,7 @@ export default function PropertyPage() {
                   <a href="tel:83472980899" className="btn btn-primary pd-call-link">
                     8 347 298-08-99
                   </a>
-                  <button className="btn btn-outline" onClick={() => setModalOpen(true)}>
+                  <button className="btn btn-outline" onClick={openModal}>
                     Получить консультацию
                   </button>
                 </div>
@@ -271,8 +262,6 @@ export default function PropertyPage() {
           </div>
         </div>
       </main>
-
-      <CallModal isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </>
   )
 }

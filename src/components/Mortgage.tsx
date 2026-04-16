@@ -1,5 +1,6 @@
 'use client'
 import { useState, useCallback } from 'react'
+import { useModal } from '@/context/ModalContext'
 
 function fmt(n: number): string {
   return Math.round(n).toLocaleString('ru-RU')
@@ -9,7 +10,8 @@ function parse(s: string): number {
   return parseFloat(s.replace(/\s/g, '').replace(',', '.')) || 0
 }
 
-export default function Mortgage({ onScrollToCta }: { onScrollToCta: () => void }) {
+export default function Mortgage() {
+  const { openMortgageModal: onScrollToCta } = useModal()
   const [price, setPrice] = useState('4 000 000')
   const [down, setDown] = useState('1 200 000')
   const [years, setYears] = useState('20')

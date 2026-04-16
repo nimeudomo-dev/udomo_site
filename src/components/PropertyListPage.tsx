@@ -1,20 +1,15 @@
 'use client'
 import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import PropertyCard from './PropertyCard'
 import PropertyFilter, { defaultFilter, CATEGORY_GROUPS, RESIDENTIAL_GROUPS, COMMERCIAL_GROUPS, type FilterState } from './PropertyFilter'
-import type { NavFilterPreset } from './Navbar'
 import type { Property } from '@/data/properties'
+import { useFavorites } from '@/hooks/useFavorites'
 
 const PAGE_SIZE = 9
 
 function normalizeType(type: string): string {
   return type === 'Вторичка' ? 'Вторичная' : type
-}
-
-interface Props {
-  favIds: number[]
-  onToggleFav: (id: number) => void
-  filterPreset?: { filter: NavFilterPreset; seq: number }
 }
 
 function Pagination({ page, total, onChange }: { page: number; total: number; onChange: (p: number) => void }) {
@@ -48,20 +43,23 @@ function Pagination({ page, total, onChange }: { page: number; total: number; on
   )
 }
 
-export default function PropertyListPage({ favIds, onToggleFav, filterPreset }: Props) {
+export default function PropertyListPage() {
+  const searchParams = useSearchParams()
+  const { favIds, toggleFav: onToggleFav } = useFavorites()
   const [properties, setProperties] = useState<Property[]>([])
   const [loading, setLoading]       = useState(true)
   const [error, setError]           = useState(false)
   const [filter, setFilter]         = useState<FilterState>(defaultFilter)
   const [page, setPage]             = useState(1)
 
-  // Применяем preset при навигации из navbar
+  // Применяем фильтр из URL-параметров
   useEffect(() => {
-    if (filterPreset && filterPreset.seq > 0) {
-      setFilter({ ...defaultFilter, ...filterPreset.filter })
+    const propClass = searchParams.get('class')
+    if (propClass) {
+      setFilter({ ...defaultFilter, propClass: propClass as FilterState['propClass'] })
       setPage(1)
     }
-  }, [filterPreset?.seq])
+  }, [searchParams])
 
   useEffect(() => {
     fetch('/api/properties')

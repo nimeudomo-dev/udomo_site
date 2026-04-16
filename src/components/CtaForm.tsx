@@ -46,7 +46,7 @@ const CtaForm = forwardRef<HTMLDivElement>((_, ref) => {
               <button className="cta-submit" onClick={handleSubmit} disabled={loading}>
                 {loading ? 'Отправляем...' : 'Получить подборку →'}
               </button>
-              <div className="cta-pd">Нажимая кнопку «Получить подборку», вы соглашаетесь с <a href="#">политикой обработки персональных данных</a></div>
+              <div className="cta-pd">Нажимая кнопку «Получить подборку», вы соглашаетесь с <a href="/docs/privacy.pdf" target="_blank" rel="noopener noreferrer">политикой обработки персональных данных</a></div>
             </>
           )}
         </div>
